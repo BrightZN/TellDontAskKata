@@ -31,16 +31,18 @@ namespace TellDontAskKata.Domain
 
         public async Task ShipAsync(IShipmentService shipmentService)
         {
-            if (Status == OrderStatus.Created || Status == OrderStatus.Rejected)
+            if (NewOrRejected())
                 throw new OrderCannotBeShippedException();
 
-            if (Status == OrderStatus.Shipped)
+            if (Shipped())
                 throw new OrderCannotBeShippedTwiceException();
 
             await shipmentService.ShipAsync(this);
 
             Status = OrderStatus.Shipped;
         }
+
+        private bool NewOrRejected() => Status == OrderStatus.Created || Status == OrderStatus.Rejected;
 
         private bool RejectingApprovedOrder(bool approved) => !approved && Status == OrderStatus.Approved;
 
