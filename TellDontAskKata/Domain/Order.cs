@@ -18,13 +18,23 @@ namespace TellDontAskKata.Domain
             if (Shipped())
                 throw new ShippedOrdersCannotBeChangedException();
 
-            if (approved && Status == OrderStatus.Rejected)
+            if (ApprovingRejectedOrder(approved))
                 throw new RejectedOrderCannotBeApprovedException();
 
-            if (!approved && Status == OrderStatus.Approved)
+            if (RejectingApprovedOrder(approved))
                 throw new ApprovedOrderCannotBeRejectedException();
 
             Status = approved ? OrderStatus.Approved : OrderStatus.Rejected;
+        }
+
+        private bool RejectingApprovedOrder(bool approved)
+        {
+            return !approved && Status == OrderStatus.Approved;
+        }
+
+        private bool ApprovingRejectedOrder(bool approved)
+        {
+            return approved && Status == OrderStatus.Rejected;
         }
 
         private bool Shipped()
