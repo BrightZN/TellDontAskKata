@@ -20,6 +20,13 @@ namespace TellDontAskKata.UseCases
         {
             var order = await _orderRepository.GetByIdAsync(request.OrderId);
 
+            await Ship(order);
+
+            await _orderRepository.SaveAsync(order);
+        }
+
+        private async Task Ship(Order order)
+        {
             if (order.Status == OrderStatus.Created || order.Status == OrderStatus.Rejected)
                 throw new OrderCannotBeShippedException();
 
@@ -29,8 +36,6 @@ namespace TellDontAskKata.UseCases
             await _shipmentService.ShipAsync(order);
 
             order.Status = OrderStatus.Shipped;
-
-            await _orderRepository.SaveAsync(order);
         }
     }
 }
