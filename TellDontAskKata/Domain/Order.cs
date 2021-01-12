@@ -15,7 +15,7 @@ namespace TellDontAskKata.Domain
 
         public void Approve(bool approved)
         {
-            if (Status == OrderStatus.Shipped)
+            if (Shipped())
                 throw new ShippedOrdersCannotBeChangedException();
 
             if (approved && Status == OrderStatus.Rejected)
@@ -25,6 +25,11 @@ namespace TellDontAskKata.Domain
                 throw new ApprovedOrderCannotBeRejectedException();
 
             Status = approved ? OrderStatus.Approved : OrderStatus.Rejected;
+        }
+
+        private bool Shipped()
+        {
+            return Status == OrderStatus.Shipped;
         }
     }
 }
