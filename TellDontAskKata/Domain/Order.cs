@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using TellDontAskKata.UseCases;
 
 namespace TellDontAskKata.Domain
 {
@@ -10,5 +12,19 @@ namespace TellDontAskKata.Domain
         public List<OrderItem> Items { get; set; }
         public decimal Tax { get; set; }
         public OrderStatus Status { get; set; }
+
+        public void Approve(bool approved)
+        {
+            if (Status == OrderStatus.Shipped)
+                throw new ShippedOrdersCannotBeChangedException();
+
+            if (approved && Status == OrderStatus.Rejected)
+                throw new RejectedOrderCannotBeApprovedException();
+
+            if (!approved && Status == OrderStatus.Approved)
+                throw new ApprovedOrderCannotBeRejectedException();
+
+            Status = approved ? OrderStatus.Approved : OrderStatus.Rejected;
+        }
     }
 }
