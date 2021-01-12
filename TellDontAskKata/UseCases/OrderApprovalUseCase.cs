@@ -17,18 +17,23 @@ namespace TellDontAskKata.UseCases
         {
             var order = await _orderRepository.GetByIdAsync(request.OrderId);
 
+            Approve(order, request.Approved);
+
+            await _orderRepository.SaveAsync(order);
+        }
+
+        private static void Approve(Order order, bool approved)
+        {
             if (order.Status == OrderStatus.Shipped)
                 throw new ShippedOrdersCannotBeChangedException();
 
-            if (request.Approved && order.Status == OrderStatus.Rejected)
+            if (approved && order.Status == OrderStatus.Rejected)
                 throw new RejectedOrderCannotBeApprovedException();
 
-            if (!request.Approved && order.Status == OrderStatus.Approved)
+            if (!approved && order.Status == OrderStatus.Approved)
                 throw new ApprovedOrderCannotBeRejectedException();
 
-            order.Status = request.Approved ? OrderStatus.Approved : OrderStatus.Rejected;
-
-            await _orderRepository.SaveAsync(order);
+            order.Status = approved ? OrderStatus.Approved : OrderStatus.Rejected;
         }
     }
 }
