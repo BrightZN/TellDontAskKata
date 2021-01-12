@@ -27,19 +27,10 @@ namespace TellDontAskKata.Domain
             Status = approved ? OrderStatus.Approved : OrderStatus.Rejected;
         }
 
-        private bool RejectingApprovedOrder(bool approved)
-        {
-            return !approved && Status == OrderStatus.Approved;
-        }
+        private bool RejectingApprovedOrder(bool approved) => !approved && Status == OrderStatus.Approved;
 
-        private bool ApprovingRejectedOrder(bool approved)
-        {
-            return approved && Status == OrderStatus.Rejected;
-        }
+        private bool ApprovingRejectedOrder(bool approved) => approved && Status == OrderStatus.Rejected;
 
-        private bool Shipped()
-        {
-            return Status == OrderStatus.Shipped;
-        }
+        private bool Shipped() => Status == OrderStatus.Shipped;
     }
 }
