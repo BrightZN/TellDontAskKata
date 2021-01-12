@@ -20,22 +20,9 @@ namespace TellDontAskKata.UseCases
         {
             var order = await _orderRepository.GetByIdAsync(request.OrderId);
 
-            await Ship(order, _shipmentService);
+            await order.ShipAsync(_shipmentService);
 
             await _orderRepository.SaveAsync(order);
-        }
-
-        private async Task Ship(Order order, IShipmentService shipmentService)
-        {
-            if (order.Status == OrderStatus.Created || order.Status == OrderStatus.Rejected)
-                throw new OrderCannotBeShippedException();
-
-            if (order.Status == OrderStatus.Shipped)
-                throw new OrderCannotBeShippedTwiceException();
-
-            await shipmentService.ShipAsync(order);
-
-            order.Status = OrderStatus.Shipped;
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using TellDontAskKata.Services;
 using TellDontAskKata.UseCases;
 
 namespace TellDontAskKata.Domain
@@ -25,6 +27,19 @@ namespace TellDontAskKata.Domain
                 throw new ApprovedOrderCannotBeRejectedException();
 
             Status = approved ? OrderStatus.Approved : OrderStatus.Rejected;
+        }
+
+        public async Task ShipAsync(IShipmentService shipmentService)
+        {
+            if (Status == OrderStatus.Created || Status == OrderStatus.Rejected)
+                throw new OrderCannotBeShippedException();
+
+            if (Status == OrderStatus.Shipped)
+                throw new OrderCannotBeShippedTwiceException();
+
+            await shipmentService.ShipAsync(this);
+
+            Status = OrderStatus.Shipped;
         }
 
         private bool RejectingApprovedOrder(bool approved) => !approved && Status == OrderStatus.Approved;
