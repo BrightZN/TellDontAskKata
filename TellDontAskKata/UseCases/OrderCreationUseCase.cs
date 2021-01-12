@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TellDontAskKata.Domain;
 using TellDontAskKata.Repositories;
@@ -28,17 +29,20 @@ namespace TellDontAskKata.UseCases
                 Tax = 0.00M
             };
 
+            var productList = await _productCatalog.GetForNamesAsync(request.Requests.Select(r => r.Name));
+
             foreach(var itemRequest in request.Requests)
             {
-                var product = await _productCatalog.GetByNameAsync(itemRequest.Name);
+                //var product = await _productCatalog.GetByNameAsync(itemRequest.Name);
 
-                if(product == null)
+                if(productList.Missing(itemRequest.Name))
                 {
                     throw new UnknownProductException();
                 }
                 else
                 {
                     // need to find the C# equivalent of Java BigDecimal.setScale(2, HALF_UP)
+                    var product = productList.GetByName(itemRequest.Name);
                     
                     decimal unitaryTax = decimal.Round(product.Price / 100.00M * product.Category.TaxPercentage, 2, MidpointRounding.AwayFromZero); // .setScale(2, HALF_UP)
                     decimal unitaryTaxedAmount = decimal.Round(product.Price + unitaryTax, 2, MidpointRounding.AwayFromZero); // .setScale(2, HALF_UP)

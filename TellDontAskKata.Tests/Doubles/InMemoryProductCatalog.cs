@@ -19,5 +19,10 @@ namespace TellDontAskKata.Tests.Doubles
         {
             return Task.FromResult(_products.FirstOrDefault(p => p.Name == name));
         }
+
+        public Task<ProductList> GetForNamesAsync(IEnumerable<string> names)
+        {
+            return Task.FromResult(new ProductList(_products.Where(p => names.Contains(p.Name))));
+        }
     }
 }
