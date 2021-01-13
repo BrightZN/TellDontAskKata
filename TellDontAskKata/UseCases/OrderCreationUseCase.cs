@@ -20,17 +20,30 @@ namespace TellDontAskKata.UseCases
 
         public async Task RunAsync(SellItemsRequest request)
         {
-            var order = new Order
-            {
-                Status = OrderStatus.Created,
-                Items = new List<OrderItem>(),
-                Currency = "EUR",
-                Total = 0.00M,
-                Tax = 0.00M
-            };
 
             var productNames = GetProductNames(request);
             var productList = await _productCatalog.GetForNamesAsync(productNames);
+
+            var items = CreateOrderItems(request, productList);
+
+            var order = new Order
+            {
+                Status = OrderStatus.Created,
+                Currency = "EUR",
+                Total = 0.00M,
+                Tax = 0.00M,
+                Items = items
+            };
+
+            order.Total = order.Items.Sum(i => i.TaxedAmount);
+            order.Tax = order.Items.Sum(i => i.Tax);
+
+            await _orderRepository.SaveAsync(order);
+        }
+
+        private static List<OrderItem> CreateOrderItems(SellItemsRequest request, ProductList productList)
+        {
+            var items = new List<OrderItem>();
 
             foreach (var itemRequest in request.Requests)
             {
@@ -59,14 +72,11 @@ namespace TellDontAskKata.UseCases
                         TaxedAmount = taxedAmount
                     };
 
-                    order.Items.Add(orderItem);
+                    items.Add(orderItem);
                 }
             }
 
-            order.Total = order.Items.Sum(i => i.TaxedAmount);
-            order.Tax = order.Items.Sum(i => i.Tax);
-
-            await _orderRepository.SaveAsync(order);
+            return items;
         }
 
         private static IEnumerable<string> GetProductNames(SellItemsRequest request)
