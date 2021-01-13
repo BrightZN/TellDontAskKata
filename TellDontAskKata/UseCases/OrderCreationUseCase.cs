@@ -42,24 +42,26 @@ namespace TellDontAskKata.UseCases
                 }
                 else
                 {
-                    // need to find the C# equivalent of Java BigDecimal.setScale(2, HALF_UP)
                     var product = productList.GetByName(itemRequest.Name);
 
                     int quantity = itemRequest.Quantity;
 
-                    decimal taxedAmount = CalculateTaxedAmount(product, quantity); // .setScale(2, HALF_UP)
+                    decimal taxedAmount = CalculateTaxedAmount(product, quantity);
                     decimal taxAmount = CalculateTax(product, quantity);
 
                     var orderItem = new OrderItem
                     {
                         Product = product,
                         Quantity = quantity,
+
+                        // Tax and TaxedAmount should be refactored to get only properties
                         Tax = taxAmount,
                         TaxedAmount = taxedAmount
                     };
 
                     order.Items.Add(orderItem);
 
+                    // Total and Tax should be refactored to get only properties
                     order.Total += taxedAmount;
                     order.Tax += taxAmount;
                 }
@@ -75,7 +77,8 @@ namespace TellDontAskKata.UseCases
 
         private static decimal CalculateTaxedAmount(Product product, int quantity)
         {
-            return decimal.Round(GetUnitaryTaxedAmount(product) * quantity, 2, MidpointRounding.AwayFromZero);
+            return decimal.Round(GetUnitaryTaxedAmount(product) * quantity, 2, MidpointRounding.AwayFromZero); 
+            // .setScale(2, HALF_UP)
         }
 
         private static decimal GetUnitaryTaxedAmount(Product product)
