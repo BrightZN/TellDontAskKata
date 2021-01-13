@@ -15,5 +15,13 @@ namespace TellDontAskKata.Domain
                 return decimal.Round(Price / 100.00M * Category.TaxPercentage, 2, MidpointRounding.AwayFromZero);
             }
         }
+
+        public decimal UnitaryTaxedAmount 
+        { 
+            get
+            {
+                return decimal.Round(Price + UnitaryTax, 2, MidpointRounding.AwayFromZero);
+            }
+        }
     }
 }

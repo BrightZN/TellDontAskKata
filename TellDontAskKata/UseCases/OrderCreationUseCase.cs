@@ -77,13 +77,7 @@ namespace TellDontAskKata.UseCases
 
         private static decimal CalculateTaxedAmount(Product product, int quantity)
         {
-            return decimal.Round(GetUnitaryTaxedAmount(product) * quantity, 2, MidpointRounding.AwayFromZero); 
-            // .setScale(2, HALF_UP)
-        }
-
-        private static decimal GetUnitaryTaxedAmount(Product product)
-        {
-            return decimal.Round(product.Price + product.UnitaryTax, 2, MidpointRounding.AwayFromZero);
+            return decimal.Round(product.UnitaryTaxedAmount * quantity, 2, MidpointRounding.AwayFromZero); 
             // .setScale(2, HALF_UP)
         }
 
