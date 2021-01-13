@@ -28,5 +28,10 @@ namespace TellDontAskKata.Domain
         {
             return UnitaryTax * quantity;
         }
+
+        public decimal CalculateTaxedAmount(int quantity)
+        {
+            return decimal.Round(UnitaryTaxedAmount * quantity, 2, MidpointRounding.AwayFromZero);
+        }
     }
 }

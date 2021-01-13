@@ -46,7 +46,7 @@ namespace TellDontAskKata.UseCases
 
                     int quantity = itemRequest.Quantity;
 
-                    decimal taxedAmount = CalculateTaxedAmount(product, quantity);
+                    decimal taxedAmount = product.CalculateTaxedAmount(quantity);
                     decimal taxAmount = product.CalculateTax(quantity);
 
                     var orderItem = new OrderItem
@@ -68,12 +68,6 @@ namespace TellDontAskKata.UseCases
             }
 
             await _orderRepository.SaveAsync(order);
-        }
-
-        private static decimal CalculateTaxedAmount(Product product, int quantity)
-        {
-            return decimal.Round(product.UnitaryTaxedAmount * quantity, 2, MidpointRounding.AwayFromZero); 
-            // .setScale(2, HALF_UP)
         }
 
         private static IEnumerable<string> GetProductNames(SellItemsRequest request)
