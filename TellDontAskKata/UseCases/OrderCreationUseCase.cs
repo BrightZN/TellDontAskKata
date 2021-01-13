@@ -20,7 +20,6 @@ namespace TellDontAskKata.UseCases
 
         public async Task RunAsync(SellItemsRequest request)
         {
-
             var productNames = GetProductNames(request);
             var productList = await _productCatalog.GetForNamesAsync(productNames);
 
@@ -30,13 +29,13 @@ namespace TellDontAskKata.UseCases
             {
                 Status = OrderStatus.Created,
                 Currency = "EUR",
-                Total = 0.00M,
-                Tax = 0.00M,
+                //Total = 0.00M,
+                //Tax = 0.00M,
                 Items = items
             };
 
-            order.Total = order.Items.Sum(i => i.TaxedAmount);
-            order.Tax = order.Items.Sum(i => i.Tax);
+            //order.Total = order.Items.Sum(i => i.TaxedAmount);
+            //order.Tax = order.Items.Sum(i => i.Tax);
 
             await _orderRepository.SaveAsync(order);
         }
@@ -47,8 +46,6 @@ namespace TellDontAskKata.UseCases
 
             foreach (var itemRequest in request.Requests)
             {
-                //var product = await _productCatalog.GetByNameAsync(itemRequest.Name);
-
                 if (productList.Missing(itemRequest.Name))
                 {
                     throw new UnknownProductException();
