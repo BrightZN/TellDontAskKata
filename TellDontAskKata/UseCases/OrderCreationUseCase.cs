@@ -23,19 +23,13 @@ namespace TellDontAskKata.UseCases
             var productNames = GetProductNames(request);
             var productList = await _productCatalog.GetForNamesAsync(productNames);
 
-            var items = CreateOrderItems(request, productList);
 
             var order = new Order
             {
                 Status = OrderStatus.Created,
                 Currency = "EUR",
-                //Total = 0.00M,
-                //Tax = 0.00M,
-                Items = items
+                Items = CreateOrderItems(request, productList)
             };
-
-            //order.Total = order.Items.Sum(i => i.TaxedAmount);
-            //order.Tax = order.Items.Sum(i => i.Tax);
 
             await _orderRepository.SaveAsync(order);
         }
@@ -52,21 +46,14 @@ namespace TellDontAskKata.UseCases
                 }
                 else
                 {
-                    var product = productList.GetByName(itemRequest.Name);
+                    var product = productList.GetProductByName(itemRequest.Name);
 
                     int quantity = itemRequest.Quantity;
-
-                    decimal taxedAmount = product.CalculateTaxedAmount(quantity);
-                    decimal taxAmount = product.CalculateTax(quantity);
 
                     var orderItem = new OrderItem
                     {
                         Product = product,
-                        Quantity = quantity,
-
-                        // Tax and TaxedAmount should be refactored to get only properties
-                        Tax = taxAmount,
-                        TaxedAmount = taxedAmount
+                        Quantity = quantity
                     };
 
                     items.Add(orderItem);

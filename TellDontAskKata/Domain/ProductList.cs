@@ -23,7 +23,7 @@ namespace TellDontAskKata.Domain
             return _products.Any(p => p.Name == name);
         }
 
-        public Product GetByName(string name)
+        public Product GetProductByName(string name)
         {
             return _products.Single(p => p.Name == name);
         }
