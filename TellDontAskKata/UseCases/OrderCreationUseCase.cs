@@ -29,13 +29,14 @@ namespace TellDontAskKata.UseCases
                 Tax = 0.00M
             };
 
-            var productList = await _productCatalog.GetForNamesAsync(request.Requests.Select(r => r.Name));
+            var productNames = GetProductNames(request);
+            var productList = await _productCatalog.GetForNamesAsync(productNames);
 
-            foreach(var itemRequest in request.Requests)
+            foreach (var itemRequest in request.Requests)
             {
                 //var product = await _productCatalog.GetByNameAsync(itemRequest.Name);
 
-                if(productList.Missing(itemRequest.Name))
+                if (productList.Missing(itemRequest.Name))
                 {
                     throw new UnknownProductException();
                 }
@@ -68,6 +69,11 @@ namespace TellDontAskKata.UseCases
             }
 
             await _orderRepository.SaveAsync(order);
+        }
+
+        private static IEnumerable<string> GetProductNames(SellItemsRequest request)
+        {
+            return request.Requests.Select(r => r.Name);
         }
     }
 }
