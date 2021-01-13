@@ -87,12 +87,6 @@ namespace TellDontAskKata.UseCases
             // .setScale(2, HALF_UP)
         }
 
-        private static decimal GetUnitaryTax(Product product)
-        {
-            return decimal.Round(product.Price / 100.00M * product.Category.TaxPercentage, 2, MidpointRounding.AwayFromZero);
-            // .setScale(2, HALF_UP)
-        }
-
         private static IEnumerable<string> GetProductNames(SellItemsRequest request)
         {
             return request.Requests.Select(r => r.Name);
