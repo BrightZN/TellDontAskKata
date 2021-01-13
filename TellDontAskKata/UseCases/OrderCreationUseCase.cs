@@ -45,14 +45,10 @@ namespace TellDontAskKata.UseCases
                 }
                 else
                 {
-                    var product = productList.GetProductByName(itemRequest.Name);
-
-                    int quantity = itemRequest.Quantity;
-
                     var orderItem = new OrderItem
                     {
-                        Product = product,
-                        Quantity = quantity
+                        Product = productList.GetProductByName(itemRequest.Name),
+                        Quantity = itemRequest.Quantity
                     };
 
                     items.Add(orderItem);
