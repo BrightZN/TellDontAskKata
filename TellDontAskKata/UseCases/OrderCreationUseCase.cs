@@ -60,12 +60,11 @@ namespace TellDontAskKata.UseCases
                     };
 
                     order.Items.Add(orderItem);
-
-                    // Total and Tax should be refactored to get only properties
-                    order.Total += taxedAmount;
-                    order.Tax += taxAmount;
                 }
             }
+
+            order.Total = order.Items.Sum(i => i.TaxedAmount);
+            order.Tax = order.Items.Sum(i => i.Tax);
 
             await _orderRepository.SaveAsync(order);
         }
