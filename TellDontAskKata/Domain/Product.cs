@@ -12,7 +12,7 @@ namespace TellDontAskKata.Domain
         {
             get
             {
-                return decimal.Round(Price / 100.00M * Category.TaxPercentage, 2, MidpointRounding.AwayFromZero);
+                return decimal.Round(Category.CalculateUnitaryTax(Price), 2, MidpointRounding.AwayFromZero);
             }
         }
 

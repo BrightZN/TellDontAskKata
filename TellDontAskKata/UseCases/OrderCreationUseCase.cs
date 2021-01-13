@@ -23,7 +23,6 @@ namespace TellDontAskKata.UseCases
             var productNames = GetProductNames(request);
             var productList = await _productCatalog.GetForNamesAsync(productNames);
 
-
             var order = new Order
             {
                 Status = OrderStatus.Created,
