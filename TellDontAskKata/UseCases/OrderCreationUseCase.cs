@@ -47,7 +47,7 @@ namespace TellDontAskKata.UseCases
                     int quantity = itemRequest.Quantity;
 
                     decimal taxedAmount = CalculateTaxedAmount(product, quantity);
-                    decimal taxAmount = CalculateTax(product, quantity);
+                    decimal taxAmount = product.CalculateTax(quantity);
 
                     var orderItem = new OrderItem
                     {
@@ -68,11 +68,6 @@ namespace TellDontAskKata.UseCases
             }
 
             await _orderRepository.SaveAsync(order);
-        }
-
-        private static decimal CalculateTax(Product product, int quantity)
-        {
-            return product.UnitaryTax * quantity;
         }
 
         private static decimal CalculateTaxedAmount(Product product, int quantity)

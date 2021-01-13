@@ -23,5 +23,10 @@ namespace TellDontAskKata.Domain
                 return decimal.Round(Price + UnitaryTax, 2, MidpointRounding.AwayFromZero);
             }
         }
+
+        public decimal CalculateTax(int quantity)
+        {
+            return UnitaryTax * quantity;
+        }
     }
 }
