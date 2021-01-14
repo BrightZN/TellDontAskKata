@@ -17,8 +17,10 @@ namespace TellDontAskKata.Tests.UseCases
             _useCase = new OrderApprovalUseCase(_orderRepository);
         }
 
-        [Fact]
-        public async Task Approves_Existing_Order()
+        [Theory]
+        [InlineData(true, OrderStatus.Approved)]
+        [InlineData(false, OrderStatus.Rejected)]
+        public async Task Approves_Existing_Order(bool approve, OrderStatus expectedStatus)
         {
             var initialOrder = new Order
             {
@@ -31,38 +33,14 @@ namespace TellDontAskKata.Tests.UseCases
             var request = new OrderApprovalRequest
             {
                 OrderId = 1,
-                Approved = true
+                Approved = approve
             };
 
             await _useCase.RunAsync(request);
 
             var savedOrder = _orderRepository.SavedOrder;
 
-            Assert.Equal(OrderStatus.Approved, savedOrder.Status);
-        }
-
-        [Fact]
-        public async Task Rejects_Existing_Order()
-        {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Created,
-                Id = 1
-            };
-
-            _orderRepository.AddOrder(initialOrder);
-
-            var request = new OrderApprovalRequest
-            {
-                OrderId = 1,
-                Approved = false
-            };
-
-            await _useCase.RunAsync(request);
-
-            var savedOrder = _orderRepository.SavedOrder;
-
-            Assert.Equal(OrderStatus.Rejected, savedOrder.Status);
+            Assert.Equal(expectedStatus, savedOrder.Status);
         }
 
         [Fact]
