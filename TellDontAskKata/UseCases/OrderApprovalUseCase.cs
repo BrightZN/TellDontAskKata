@@ -16,7 +16,6 @@ namespace TellDontAskKata.UseCases
         {
             var order = await _orderRepository.GetByIdAsync(request.OrderId);
 
-            //order.Approve(request.Approved);
             if (request.Approved)
                 order.Approve();
             else
