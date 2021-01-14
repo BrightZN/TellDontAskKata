@@ -16,20 +16,26 @@ namespace TellDontAskKata.Domain
         public decimal Tax => Items.Sum(i => i.Tax);
         public OrderStatus Status { get; set; }
 
-        public void Approve(bool approved)
+        public void Approve(bool approve)
         {
             if (Shipped())
                 throw new ShippedOrdersCannotBeChangedException();
 
-            if (ApprovingRejectedOrder(approved))
-                throw new RejectedOrderCannotBeApprovedException();
+            if (approve)
+            {
+                if (Rejected())
+                    throw new RejectedOrderCannotBeApprovedException();
 
-            if (RejectingApprovedOrder(approved))
-                throw new ApprovedOrderCannotBeRejectedException();
+                Status = OrderStatus.Approved;
+            }
+            else
+            {
+                if (Approved())
+                    throw new ApprovedOrderCannotBeRejectedException();
 
-            Status = approved ? OrderStatus.Approved : OrderStatus.Rejected;
+                Status = OrderStatus.Rejected;
+            }
         }
-
         public async Task ShipAsync(IShipmentService shipmentService)
         {
             if (NewOrRejected())
@@ -43,11 +49,13 @@ namespace TellDontAskKata.Domain
             Status = OrderStatus.Shipped;
         }
 
-        private bool NewOrRejected() => Status == OrderStatus.Created || Status == OrderStatus.Rejected;
+        private bool Approved() => Status == OrderStatus.Approved;
 
-        private bool RejectingApprovedOrder(bool approved) => !approved && Status == OrderStatus.Approved;
+        private bool Rejected() => Status == OrderStatus.Rejected;
 
-        private bool ApprovingRejectedOrder(bool approved) => approved && Status == OrderStatus.Rejected;
+        private bool NewOrRejected() => Created() || Rejected();
+
+        private bool Created() => Status == OrderStatus.Created;
 
         private bool Shipped() => Status == OrderStatus.Shipped;
     }
