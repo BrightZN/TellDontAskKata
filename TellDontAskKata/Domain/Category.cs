@@ -9,7 +9,7 @@ namespace TellDontAskKata.Domain
 
         public decimal CalculateUnitaryTax(decimal price)
         {
-            return price / 100.00M * TaxPercentage;
+            return decimal.Round(price / 100.00M * TaxPercentage, 2, MidpointRounding.AwayFromZero);
         }
     }
 }
