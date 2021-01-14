@@ -11,19 +11,10 @@ namespace TellDontAskKata.Domain
 
         public decimal UnitaryTax => Category.CalculateUnitaryTax(Price);
 
-        public decimal UnitaryTaxedAmount 
-        { 
-            get
-            {
-                return Round(Price + UnitaryTax);
-            }
-        }
+        public decimal UnitaryTaxedAmount => Round(Price + UnitaryTax);
 
         public decimal CalculateTax(int quantity) => UnitaryTax * quantity;
 
-        public decimal CalculateTaxedAmount(int quantity)
-        {
-            return Round(UnitaryTaxedAmount * quantity);
-        }
+        public decimal CalculateTaxedAmount(int quantity) => Round(UnitaryTaxedAmount * quantity);
     }
 }

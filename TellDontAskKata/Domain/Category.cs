@@ -7,9 +7,6 @@ namespace TellDontAskKata.Domain
         public string Name { get; set; }
         public decimal TaxPercentage { get; set; }
 
-        public decimal CalculateUnitaryTax(decimal price)
-        {
-            return Round(price / 100.00M * TaxPercentage);
-        }
+        public decimal CalculateUnitaryTax(decimal price) => Round(price / 100.00M * TaxPercentage);
     }
 }
