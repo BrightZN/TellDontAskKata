@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using TellDontAskKata.Domain;
 using TellDontAskKata.Tests.Doubles;
 using TellDontAskKata.UseCases;
@@ -20,7 +21,7 @@ namespace TellDontAskKata.Tests.UseCases
         [Theory]
         [InlineData(true, OrderStatus.Approved)]
         [InlineData(false, OrderStatus.Rejected)]
-        public async Task Approves_Existing_Order(bool approve, OrderStatus expectedStatus)
+        public async Task Approves_Existing_Order(bool approved, OrderStatus expectedStatus)
         {
             var initialOrder = new Order
             {
@@ -33,7 +34,7 @@ namespace TellDontAskKata.Tests.UseCases
             var request = new OrderApprovalRequest
             {
                 OrderId = 1,
-                Approved = approve
+                Approved = approved
             };
 
             await _useCase.RunAsync(request);
@@ -65,6 +66,32 @@ namespace TellDontAskKata.Tests.UseCases
             Assert.Null(_orderRepository.SavedOrder);
         }
 
+        [Theory]
+        [InlineData(OrderStatus.Approved, false, typeof(ApprovedOrderCannotBeRejectedException))]
+        [InlineData(OrderStatus.Shipped, true, typeof(ShippedOrdersCannotBeChangedException))]
+        [InlineData(OrderStatus.Shipped, false, typeof(ShippedOrdersCannotBeChangedException))]
+        public async Task Cannot_Approve_Order_With_Status(OrderStatus initialStatus, bool approved, Type expectedException)
+        {
+            var initialOrder = new Order
+            {
+                Status = initialStatus,
+                Id = 1
+            };
+
+            _orderRepository.AddOrder(initialOrder);
+
+            var request = new OrderApprovalRequest
+            {
+                OrderId = 1,
+                Approved = approved
+            };
+
+            await Assert.ThrowsAsync(expectedException, () => _useCase.RunAsync(request));
+
+            Assert.Null(_orderRepository.SavedOrder);
+        }
+
+        /*
         [Fact]
         public async Task Cannot_Reject_Approved_Order()
         {
@@ -130,5 +157,6 @@ namespace TellDontAskKata.Tests.UseCases
 
             Assert.Null(_orderRepository.SavedOrder);
         }
+        */
     }
 }
