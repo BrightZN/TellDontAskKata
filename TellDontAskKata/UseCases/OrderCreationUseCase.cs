@@ -36,16 +36,12 @@ namespace TellDontAskKata.UseCases
 
             foreach (var itemRequest in request.Requests)
             {
-                if (productList.Missing(itemRequest.Name))
-                    throw new UnknownProductException();
-                else
-                {
-                    var orderItem = new OrderItem(
-                        product: productList.GetProductByName(itemRequest.Name),
-                        quantity: itemRequest.Quantity);
+                string name = itemRequest.Name;
+                int quantity = itemRequest.Quantity;
 
-                    items.Add(orderItem);
-                }
+                var orderItem  = OrderItem.Create(name, quantity, productList);
+
+                items.Add(orderItem);
             }
 
             return items;
