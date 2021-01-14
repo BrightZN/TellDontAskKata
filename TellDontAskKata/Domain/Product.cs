@@ -8,13 +8,7 @@ namespace TellDontAskKata.Domain
         public decimal Price { get; set; }
         public Category Category { get; set; }
 
-        public decimal UnitaryTax
-        {
-            get
-            {
-                return Category.CalculateUnitaryTax(Price);
-            }
-        }
+        public decimal UnitaryTax => Category.CalculateUnitaryTax(Price);
 
         public decimal UnitaryTaxedAmount 
         { 
@@ -24,10 +18,7 @@ namespace TellDontAskKata.Domain
             }
         }
 
-        public decimal CalculateTax(int quantity)
-        {
-            return UnitaryTax * quantity;
-        }
+        public decimal CalculateTax(int quantity) => UnitaryTax * quantity;
 
         public decimal CalculateTaxedAmount(int quantity)
         {
