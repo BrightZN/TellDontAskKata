@@ -13,19 +13,10 @@ namespace TellDontAskKata.Domain
             _products = products;
         }
 
-        public bool Missing(string name)
-        {
-            return !Contains(name);
-        }
+        public bool Missing(string name) => !Contains(name);
 
-        private bool Contains(string name)
-        {
-            return _products.Any(p => p.Name == name);
-        }
+        private bool Contains(string name) => _products.Any(p => p.Name == name);
 
-        public Product GetProductByName(string name)
-        {
-            return _products.Single(p => p.Name == name);
-        }
+        public Product GetProductByName(string name) => _products.Single(p => p.Name == name);
     }
 }
