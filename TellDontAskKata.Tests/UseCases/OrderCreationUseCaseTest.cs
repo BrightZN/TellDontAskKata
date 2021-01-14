@@ -19,11 +19,7 @@ namespace TellDontAskKata.Tests.UseCases
         {
             _orderRepository = new TestOrderRepository();
 
-            _food = new Category
-            {
-                Name = "food",
-                TaxPercentage = 10.00M
-            };
+            _food = new Category(name: "food", taxPercentage: 10.00M);
 
             _productCatalog = new InMemoryProductCatalog(new List<Product> { 
                 new Product 
