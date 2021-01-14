@@ -1,4 +1,6 @@
 ﻿using System;
+using static TellDontAskKata.Domain.CurrencyRounding;
+
 
 namespace TellDontAskKata.Domain
 {
@@ -14,7 +16,9 @@ namespace TellDontAskKata.Domain
         { 
             get
             {
-                return decimal.Round(Price + UnitaryTax, 2, MidpointRounding.AwayFromZero);
+                decimal unitaryTaxedAmount = Price + UnitaryTax;
+
+                return Round(unitaryTaxedAmount);
             }
         }
 
@@ -22,7 +26,9 @@ namespace TellDontAskKata.Domain
 
         public decimal CalculateTaxedAmount(int quantity)
         {
-            return decimal.Round(UnitaryTaxedAmount * quantity, 2, MidpointRounding.AwayFromZero);
+            decimal taxedAmount = UnitaryTaxedAmount * quantity;
+
+            return Round(taxedAmount);
         }
     }
 }
