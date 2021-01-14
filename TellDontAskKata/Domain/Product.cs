@@ -5,16 +5,16 @@ namespace TellDontAskKata.Domain
 {
     public class Product
     {
-        public string Name { get; }
-        public decimal Price { get; }
-        public Category Category { get; }
-
         public Product(string name, decimal price, Category category)
         {
             Name = name;
             Price = price;
             Category = category;
         }
+
+        public string Name { get; }
+        public decimal Price { get; }
+        public Category Category { get; }
 
         public decimal UnitaryTax => Category.CalculateUnitaryTax(Price);
 
