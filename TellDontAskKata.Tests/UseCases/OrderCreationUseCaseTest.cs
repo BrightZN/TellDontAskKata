@@ -22,18 +22,8 @@ namespace TellDontAskKata.Tests.UseCases
             _food = new Category(name: "food", taxPercentage: 10.00M);
 
             _productCatalog = new InMemoryProductCatalog(new List<Product> { 
-                new Product 
-                {
-                    Name = "salad",
-                    Price = 3.56M,
-                    Category = _food
-                },
-                new Product
-                {
-                    Name = "tomato",
-                    Price = 4.65M,
-                    Category = _food
-                }
+                new Product(name: "salad", price: 3.56M, category: _food),
+                new Product(name: "tomato", price: 4.65M, category: _food)
             });
 
             _useCase = new OrderCreationUseCase(_orderRepository, _productCatalog);
