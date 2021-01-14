@@ -43,11 +43,9 @@ namespace TellDontAskKata.UseCases
                     throw new UnknownProductException();
                 else
                 {
-                    var orderItem = new OrderItem
-                    {
-                        Product = productList.GetProductByName(itemRequest.Name),
-                        Quantity = itemRequest.Quantity
-                    };
+                    var orderItem = new OrderItem(
+                        product: productList.GetProductByName(itemRequest.Name),
+                        quantity: itemRequest.Quantity);
 
                     items.Add(orderItem);
                 }
