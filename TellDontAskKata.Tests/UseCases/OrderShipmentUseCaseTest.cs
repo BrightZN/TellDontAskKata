@@ -67,49 +67,5 @@ namespace TellDontAskKata.Tests.UseCases
             Assert.Null(_orderRepository.SavedOrder);
             Assert.Null(_shipmentService.ShippedOrder);
         }
-
-        //[Fact]
-        //public async Task Rejected_Order_Cannot_Be_Shipped()
-        //{
-        //    var initialOrder = new Order
-        //    {
-        //        Id = 1,
-        //        Status = OrderStatus.Rejected
-        //    };
-
-        //    _orderRepository.AddOrder(initialOrder);
-
-        //    var request = new OrderShipmentRequest
-        //    {
-        //        OrderId = 1
-        //    };
-
-        //    await Assert.ThrowsAsync<OrderCannotBeShippedException>(() => _useCase.RunAsync(request));
-
-        //    Assert.Null(_orderRepository.SavedOrder);
-        //    Assert.Null(_shipmentService.ShippedOrder);
-        //}
-
-        //[Fact]
-        //public async Task Shipped_Order_Cannot_Be_Shipped_Again()
-        //{
-        //    var initialOrder = new Order
-        //    {
-        //        Id = 1,
-        //        Status = OrderStatus.Shipped
-        //    };
-
-        //    _orderRepository.AddOrder(initialOrder);
-
-        //    var request = new OrderShipmentRequest
-        //    {
-        //        OrderId = 1
-        //    };
-
-        //    await Assert.ThrowsAsync<OrderCannotBeShippedTwiceException>(() => _useCase.RunAsync(request));
-
-        //    Assert.Null(_orderRepository.SavedOrder);
-        //    Assert.Null(_shipmentService.ShippedOrder);
-        //}
     }
 }
