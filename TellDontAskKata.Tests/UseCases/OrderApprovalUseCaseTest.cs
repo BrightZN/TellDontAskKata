@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using TellDontAskKata.Domain;
 using TellDontAskKata.Tests.Doubles;
@@ -23,11 +24,7 @@ namespace TellDontAskKata.Tests.UseCases
         [InlineData(false, OrderStatus.Rejected)]
         public async Task Approves_Existing_Order(bool approved, OrderStatus expectedStatus)
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Created,
-                Id = 1
-            };
+            var initialOrder = new Order(1, string.Empty, OrderStatus.Created, Enumerable.Empty<OrderItem>());
 
             _orderRepository.AddOrder(initialOrder);
 
@@ -51,11 +48,7 @@ namespace TellDontAskKata.Tests.UseCases
         [InlineData(OrderStatus.Shipped, false, typeof(ShippedOrdersCannotBeChangedException))]
         public async Task Cannot_Approve_Order_With_Status(OrderStatus initialStatus, bool approved, Type expectedException)
         {
-            var initialOrder = new Order
-            {
-                Status = initialStatus,
-                Id = 1
-            };
+            var initialOrder = new Order(1, string.Empty, initialStatus, Enumerable.Empty<OrderItem>());
 
             _orderRepository.AddOrder(initialOrder);
 

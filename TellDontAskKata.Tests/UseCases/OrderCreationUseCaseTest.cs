@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TellDontAskKata.Domain;
 using TellDontAskKata.Repositories;
@@ -56,9 +57,9 @@ namespace TellDontAskKata.Tests.UseCases
             Assert.Equal(OrderStatus.Created, createdOrder.Status);
             Assert.Equal(23.20M, createdOrder.Total);
             Assert.Equal("EUR", createdOrder.Currency);
-            Assert.Equal(2, createdOrder.Items.Count);
+            Assert.Equal(2, createdOrder.Items.Count());
 
-            var firstItem = createdOrder.Items[0];
+            var firstItem = createdOrder.Items.First();
 
             Assert.Equal("salad", firstItem.Product.Name);
             Assert.Equal(3.56M, firstItem.Product.Price);
@@ -66,7 +67,7 @@ namespace TellDontAskKata.Tests.UseCases
             Assert.Equal(7.84M, firstItem.TaxedAmount);
             Assert.Equal(0.72M, firstItem.Tax);
 
-            var secondItem = createdOrder.Items[1];
+            var secondItem = createdOrder.Items.Skip(1).First();
 
             Assert.Equal("tomato", secondItem.Product.Name);
             Assert.Equal(4.65M, secondItem.Product.Price);

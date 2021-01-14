@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using TellDontAskKata.Domain;
 using TellDontAskKata.Tests.Doubles;
@@ -24,11 +25,7 @@ namespace TellDontAskKata.Tests.UseCases
         [Fact]
         public async Task Ships_Approved_Order()
         {
-            var initialOrder = new Order
-            {
-                Id = 1,
-                Status = OrderStatus.Approved
-            };
+            var initialOrder = new Order(1, string.Empty, OrderStatus.Approved, Enumerable.Empty<OrderItem>());
 
             _orderRepository.AddOrder(initialOrder);
 
@@ -49,11 +46,7 @@ namespace TellDontAskKata.Tests.UseCases
         [InlineData(OrderStatus.Shipped, typeof(OrderCannotBeShippedTwiceException))]
         public async Task Cannot_Ship_Order_With_Status(OrderStatus initialStatus, Type expectedException)
         {
-            var initialOrder = new Order
-            {
-                Id = 1,
-                Status = initialStatus
-            };
+            var initialOrder = new Order(1, string.Empty, initialStatus, Enumerable.Empty<OrderItem>());
 
             _orderRepository.AddOrder(initialOrder);
 

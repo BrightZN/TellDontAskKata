@@ -9,12 +9,27 @@ namespace TellDontAskKata.Domain
 {
     public class Order
     {
-        public int Id { get; set; }
+        public Order(int id, string currency, OrderStatus status, IEnumerable<OrderItem> items)
+        {
+            Id = id;
+            Currency = currency;
+            Status = status;
+            Items = items;
+        }
+
+        public Order(string currency, IEnumerable<OrderItem> items)
+            : this(0, currency, OrderStatus.Created, items)
+        {
+        }
+
+        public int Id { get; }
+        public string Currency { get; }
+        public OrderStatus Status { get; private set; }
+        public IEnumerable<OrderItem> Items { get; }
+
         public decimal Total => Items.Sum(i => i.TaxedAmount);
-        public string Currency { get; set; }
-        public List<OrderItem> Items { get; set; } = new List<OrderItem>();
+
         public decimal Tax => Items.Sum(i => i.Tax);
-        public OrderStatus Status { get; set; }
 
         public void Approve()
         {

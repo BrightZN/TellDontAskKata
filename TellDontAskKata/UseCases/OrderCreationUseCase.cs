@@ -23,12 +23,9 @@ namespace TellDontAskKata.UseCases
             var productNames = GetProductNames(request);
             var productList = await _productCatalog.GetForNamesAsync(productNames);
 
-            var order = new Order
-            {
-                Status = OrderStatus.Created,
-                Currency = "EUR",
-                Items = CreateOrderItems(request, productList)
-            };
+            var order = new Order(
+                currency: "EUR", 
+                items: CreateOrderItems(request, productList));
 
             await _orderRepository.SaveAsync(order);
         }
