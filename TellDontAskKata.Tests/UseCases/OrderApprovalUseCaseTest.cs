@@ -44,30 +44,9 @@ namespace TellDontAskKata.Tests.UseCases
             Assert.Equal(expectedStatus, savedOrder.Status);
         }
 
-        [Fact]
-        public async Task Cannot_Approve_Rejected_Order()
-        {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Rejected,
-                Id = 1
-            };
-
-            _orderRepository.AddOrder(initialOrder);
-
-            var request = new OrderApprovalRequest
-            {
-                OrderId = 1,
-                Approved = true
-            };
-
-            await Assert.ThrowsAsync<RejectedOrderCannotBeApprovedException>(() => _useCase.RunAsync(request));
-
-            Assert.Null(_orderRepository.SavedOrder);
-        }
-
         [Theory]
         [InlineData(OrderStatus.Approved, false, typeof(ApprovedOrderCannotBeRejectedException))]
+        [InlineData(OrderStatus.Rejected, true, typeof(RejectedOrderCannotBeApprovedException))]
         [InlineData(OrderStatus.Shipped, true, typeof(ShippedOrdersCannotBeChangedException))]
         [InlineData(OrderStatus.Shipped, false, typeof(ShippedOrdersCannotBeChangedException))]
         public async Task Cannot_Approve_Order_With_Status(OrderStatus initialStatus, bool approved, Type expectedException)
