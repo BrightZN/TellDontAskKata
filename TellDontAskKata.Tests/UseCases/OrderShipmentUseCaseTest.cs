@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using TellDontAskKata.Domain;
 using TellDontAskKata.Tests.Doubles;
 using TellDontAskKata.UseCases;
@@ -42,13 +43,16 @@ namespace TellDontAskKata.Tests.UseCases
             Assert.Equal(_shipmentService.ShippedOrder, initialOrder);
         }
 
-        [Fact]
-        public async Task Created_Order_Cannot_Be_Shipped()
+        [Theory]
+        [InlineData(OrderStatus.Created, typeof(OrderCannotBeShippedException))]
+        [InlineData(OrderStatus.Rejected, typeof(OrderCannotBeShippedException))]
+        [InlineData(OrderStatus.Shipped, typeof(OrderCannotBeShippedTwiceException))]
+        public async Task Cannot_Ship_Order_With_Status(OrderStatus initialStatus, Type expectedException)
         {
             var initialOrder = new Order
             {
                 Id = 1,
-                Status = OrderStatus.Created
+                Status = initialStatus
             };
 
             _orderRepository.AddOrder(initialOrder);
@@ -58,54 +62,54 @@ namespace TellDontAskKata.Tests.UseCases
                 OrderId = 1
             };
 
-            await Assert.ThrowsAsync<OrderCannotBeShippedException>(() => _useCase.RunAsync(request));
+            await Assert.ThrowsAsync(expectedException, () => _useCase.RunAsync(request));
 
             Assert.Null(_orderRepository.SavedOrder);
             Assert.Null(_shipmentService.ShippedOrder);
         }
 
-        [Fact]
-        public async Task Rejected_Order_Cannot_Be_Shipped()
-        {
-            var initialOrder = new Order
-            {
-                Id = 1,
-                Status = OrderStatus.Rejected
-            };
+        //[Fact]
+        //public async Task Rejected_Order_Cannot_Be_Shipped()
+        //{
+        //    var initialOrder = new Order
+        //    {
+        //        Id = 1,
+        //        Status = OrderStatus.Rejected
+        //    };
 
-            _orderRepository.AddOrder(initialOrder);
+        //    _orderRepository.AddOrder(initialOrder);
 
-            var request = new OrderShipmentRequest
-            {
-                OrderId = 1
-            };
+        //    var request = new OrderShipmentRequest
+        //    {
+        //        OrderId = 1
+        //    };
 
-            await Assert.ThrowsAsync<OrderCannotBeShippedException>(() => _useCase.RunAsync(request));
+        //    await Assert.ThrowsAsync<OrderCannotBeShippedException>(() => _useCase.RunAsync(request));
 
-            Assert.Null(_orderRepository.SavedOrder);
-            Assert.Null(_shipmentService.ShippedOrder);
-        }
+        //    Assert.Null(_orderRepository.SavedOrder);
+        //    Assert.Null(_shipmentService.ShippedOrder);
+        //}
 
-        [Fact]
-        public async Task Shipped_Order_Cannot_Be_Shipped_Again()
-        {
-            var initialOrder = new Order
-            {
-                Id = 1,
-                Status = OrderStatus.Shipped
-            };
+        //[Fact]
+        //public async Task Shipped_Order_Cannot_Be_Shipped_Again()
+        //{
+        //    var initialOrder = new Order
+        //    {
+        //        Id = 1,
+        //        Status = OrderStatus.Shipped
+        //    };
 
-            _orderRepository.AddOrder(initialOrder);
+        //    _orderRepository.AddOrder(initialOrder);
 
-            var request = new OrderShipmentRequest
-            {
-                OrderId = 1
-            };
+        //    var request = new OrderShipmentRequest
+        //    {
+        //        OrderId = 1
+        //    };
 
-            await Assert.ThrowsAsync<OrderCannotBeShippedTwiceException>(() => _useCase.RunAsync(request));
+        //    await Assert.ThrowsAsync<OrderCannotBeShippedTwiceException>(() => _useCase.RunAsync(request));
 
-            Assert.Null(_orderRepository.SavedOrder);
-            Assert.Null(_shipmentService.ShippedOrder);
-        }
+        //    Assert.Null(_orderRepository.SavedOrder);
+        //    Assert.Null(_shipmentService.ShippedOrder);
+        //}
     }
 }
