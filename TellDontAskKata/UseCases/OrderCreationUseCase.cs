@@ -20,8 +20,7 @@ namespace TellDontAskKata.UseCases
 
         public async Task RunAsync(SellItemsRequest request)
         {
-            var productNames = GetProductNames(request);
-            var productList = await _productCatalog.GetForNamesAsync(productNames);
+            var productList = await _productCatalog.GetForNamesAsync(request.ProductNames);
 
             var order = new Order(
                 currency: "EUR", 
@@ -45,11 +44,6 @@ namespace TellDontAskKata.UseCases
             }
 
             return items;
-        }
-
-        private static IEnumerable<string> GetProductNames(SellItemsRequest request)
-        {
-            return request.Requests.Select(r => r.Name);
         }
     }
 }
