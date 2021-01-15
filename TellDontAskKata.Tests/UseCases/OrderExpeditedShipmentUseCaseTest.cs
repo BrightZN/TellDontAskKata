@@ -1,40 +1,46 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using TellDontAskKata.Domain;
 using TellDontAskKata.Repositories;
+using TellDontAskKata.Services;
 using TellDontAskKata.Tests.Doubles;
 using TellDontAskKata.UseCases;
 using Xunit;
 
 namespace TellDontAskKata.Tests.UseCases
 {
-    public class OrderCreationUseCaseTest
+    public class OrderExpeditedShipmentUseCaseTest
     {
         private readonly TestOrderRepository _orderRepository;
-        private readonly Category _food;
         private readonly IProductCatalog _productCatalog;
-        private readonly OrderCreationUseCase _useCase;
+        private readonly TestShipmentService _shipmentService;
+        private readonly Category _food;
 
-        public OrderCreationUseCaseTest()
+        private readonly OrderExpeditedShipmentUseCase _useCase;
+
+        public OrderExpeditedShipmentUseCaseTest()
         {
             _orderRepository = new TestOrderRepository();
+            _shipmentService = new TestShipmentService();
 
             _food = new Category(name: "food", taxPercentage: 10.00M);
 
-            _productCatalog = new InMemoryProductCatalog(new List<Product> { 
+            _productCatalog = new InMemoryProductCatalog(new List<Product> {
                 new Product(name: "salad", price: 3.56M, category: _food),
                 new Product(name: "tomato", price: 4.65M, category: _food)
             });
 
-            _useCase = new OrderCreationUseCase(_orderRepository, _productCatalog);
+            _useCase = new OrderExpeditedShipmentUseCase(_orderRepository, _productCatalog, _shipmentService);
         }
 
         [Fact]
-        public async Task Sell_Multiple_Items()
+        public async Task Creates_Approves_And_Ships_Order()
         {
             var request = new SellItemsRequest
-            { 
+            {
                 Requests = new List<SellItemRequest>
                 {
                     new SellItemRequest
@@ -52,9 +58,15 @@ namespace TellDontAskKata.Tests.UseCases
 
             await _useCase.RunAsync(request);
 
+            var shippedOrder = _shipmentService.ShippedOrder;
+
+            Assert.NotNull(shippedOrder);
+            Assert.Equal(OrderStatus.Shipped, shippedOrder.Status);
+
             var createdOrder = _orderRepository.SavedOrder;
 
-            Assert.Equal(OrderStatus.Created, createdOrder.Status);
+            Assert.Equal(shippedOrder, createdOrder);
+
             Assert.Equal(23.20M, createdOrder.Total);
             Assert.Equal("EUR", createdOrder.Currency);
             Assert.Equal(2, createdOrder.Items.Count());

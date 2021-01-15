@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Threading.Tasks;
+using TellDontAskKata.Domain;
 using TellDontAskKata.Repositories;
 using TellDontAskKata.Services;
 
 namespace TellDontAskKata.UseCases
 {
-    public class OrderExpiditedShipmentUseCase
+    public class OrderExpeditedShipmentUseCase
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IProductCatalog _productCatalog;
         private readonly IShipmentService _shipmentService;
 
-        public OrderExpiditedShipmentUseCase()
-        {
-        }
-
-        public OrderExpiditedShipmentUseCase(IOrderRepository orderRepository, IProductCatalog productCatalog, IShipmentService shipmentService)
+        public OrderExpeditedShipmentUseCase(IOrderRepository orderRepository, IProductCatalog productCatalog, IShipmentService shipmentService)
         {
             _orderRepository = orderRepository;
             _productCatalog = productCatalog;
@@ -24,9 +21,17 @@ namespace TellDontAskKata.UseCases
 
         public async Task RunAsync(SellItemsRequest request)
         {
+            var productList = await _productCatalog.GetForNamesAsync(request.ProductNames);
+            
+            var order = new Order(
+                currency: "EUR",
+                items: request.ToOrderItems(productList));
 
+            order.Approve();
 
-            //throw new NotImplementedException();
+            await order.ShipAsync(_shipmentService);
+
+            await _orderRepository.SaveAsync(order);
         }
     }
 }

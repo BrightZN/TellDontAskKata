@@ -37,7 +37,7 @@ namespace TellDontAskKata.Tests.UseCases
             await _useCase.RunAsync(request);
 
             Assert.Equal(OrderStatus.Shipped, _orderRepository.SavedOrder.Status);
-            Assert.Equal(_shipmentService.ShippedOrder, initialOrder);
+            Assert.Equal(initialOrder, _shipmentService.ShippedOrder);
         }
 
         [Theory]
