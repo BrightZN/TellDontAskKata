@@ -8,10 +8,7 @@ namespace TellDontAskKata.Domain
     {
         private readonly IEnumerable<Product> _products;
 
-        public ProductList(IEnumerable<Product> products)
-        {
-            _products = products;
-        }
+        public ProductList(IEnumerable<Product> products) => _products = products;
 
         public bool Missing(string name) => !Contains(name);
 
