@@ -24,7 +24,7 @@ namespace TellDontAskKata.UseCases
 
             var order = new Order(
                 currency: "EUR", 
-                items: CreateOrderItems(request, productList));
+                items: request.ToOrderItems(productList));
 
             await _orderRepository.SaveAsync(order);
         }
