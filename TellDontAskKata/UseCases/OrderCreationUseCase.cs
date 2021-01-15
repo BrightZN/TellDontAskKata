@@ -28,12 +28,5 @@ namespace TellDontAskKata.UseCases
 
             await _orderRepository.SaveAsync(order);
         }
-
-        private static IEnumerable<OrderItem> CreateOrderItems(SellItemsRequest request, ProductList productList)
-        {
-            return request.Requests
-                .Select(r => OrderItem.Create(r.Name, r.Quantity, productList))
-                .ToList();
-        }
     }
 }
