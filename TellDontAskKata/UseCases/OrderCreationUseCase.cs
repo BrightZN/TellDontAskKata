@@ -29,21 +29,11 @@ namespace TellDontAskKata.UseCases
             await _orderRepository.SaveAsync(order);
         }
 
-        private static List<OrderItem> CreateOrderItems(SellItemsRequest request, ProductList productList)
+        private static IEnumerable<OrderItem> CreateOrderItems(SellItemsRequest request, ProductList productList)
         {
-            var items = new List<OrderItem>();
-
-            foreach (var itemRequest in request.Requests)
-            {
-                string name = itemRequest.Name;
-                int quantity = itemRequest.Quantity;
-
-                var orderItem  = OrderItem.Create(name, quantity, productList);
-
-                items.Add(orderItem);
-            }
-
-            return items;
+            return request.Requests
+                .Select(r => OrderItem.Create(r.Name, r.Quantity, productList))
+                .ToList();
         }
     }
 }
