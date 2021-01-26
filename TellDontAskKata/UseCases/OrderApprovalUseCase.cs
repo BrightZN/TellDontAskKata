@@ -15,18 +15,20 @@ namespace TellDontAskKata.UseCases
 
         public async Task RunAsync(OrderApprovalRequest request)
         {
+            var isApproved = request.Approved;
+            
             var order = await _orderRepository.GetByIdAsync(request.OrderId);
 
             if (order.Status == OrderStatus.Shipped)
                 throw new ShippedOrdersCannotBeChangedException();
-
-            if (request.Approved && order.Status == OrderStatus.Rejected)
+            
+            if (isApproved && order.Status == OrderStatus.Rejected)
                 throw new RejectedOrderCannotBeApprovedException();
 
-            if (!request.Approved && order.Status == OrderStatus.Approved)
+            if (!isApproved && order.Status == OrderStatus.Approved)
                 throw new ApprovedOrderCannotBeRejectedException();
 
-            order.Status = request.Approved ? OrderStatus.Approved : OrderStatus.Rejected;
+            order.Status = isApproved ? OrderStatus.Approved : OrderStatus.Rejected;
 
             await _orderRepository.SaveAsync(order);
         }
