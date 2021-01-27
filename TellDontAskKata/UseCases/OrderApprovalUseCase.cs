@@ -19,23 +19,9 @@ namespace TellDontAskKata.UseCases
             
             var order = await _orderRepository.GetByIdAsync(request.OrderId);
 
-            Approve(order, isApproved);
+            order.Approve(isApproved);
 
             await _orderRepository.SaveAsync(order);
-        }
-
-        private void Approve(Order order, bool isApproved)
-        {
-            if (order.Status == OrderStatus.Shipped)
-                throw new ShippedOrdersCannotBeChangedException();
-
-            if (isApproved && order.Status == OrderStatus.Rejected)
-                throw new RejectedOrderCannotBeApprovedException();
-
-            if (!isApproved && order.Status == OrderStatus.Approved)
-                throw new ApprovedOrderCannotBeRejectedException();
-
-            order.Status = isApproved ? OrderStatus.Approved : OrderStatus.Rejected;
         }
     }
 }
