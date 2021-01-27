@@ -34,21 +34,38 @@ namespace TellDontAskKata.Domain
 
         private bool CannotBeShippedYet()
         {
-            return Status == OrderStatus.Created || Status == OrderStatus.Rejected;
+            return Status == OrderStatus.Created || Rejected();
         }
 
         public void Approve(bool isApproved)
         {
-            if (Status == OrderStatus.Shipped)
+            if (Shipped())
                 throw new ShippedOrdersCannotBeChangedException();
 
-            if (isApproved && Status == OrderStatus.Rejected)
-                throw new RejectedOrderCannotBeApprovedException();
+            if (isApproved)
+            {
+                if (Rejected())
+                    throw new RejectedOrderCannotBeApprovedException();
 
-            if (!isApproved && Status == OrderStatus.Approved)
-                throw new ApprovedOrderCannotBeRejectedException();
+                Status = OrderStatus.Approved;
+            }
+            else
+            {
+                if(Approved())
+                    throw new ApprovedOrderCannotBeRejectedException();
+                
+                Status = OrderStatus.Rejected;
+            }
+        }
 
-            Status = isApproved ? OrderStatus.Approved : OrderStatus.Rejected;
+        private bool Approved()
+        {
+            return Status == OrderStatus.Approved;
+        }
+
+        private bool Rejected()
+        {
+            return Status == OrderStatus.Rejected;
         }
     }
 }
