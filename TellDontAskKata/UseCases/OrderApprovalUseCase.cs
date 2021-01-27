@@ -15,11 +15,9 @@ namespace TellDontAskKata.UseCases
 
         public async Task RunAsync(OrderApprovalRequest request)
         {
-            var isApproved = request.Approved;
-            
             var order = await _orderRepository.GetByIdAsync(request.OrderId);
 
-            order.Approve(isApproved);
+            order.Approve(request.Approved);
 
             await _orderRepository.SaveAsync(order);
         }
