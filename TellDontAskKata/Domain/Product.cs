@@ -10,22 +10,19 @@ namespace TellDontAskKata.Domain
 
         private decimal CalculateUnitaryTax()
         {
-            return decimal.Round(this.Price / 100.00M * this.Category.TaxPercentage, 2, MidpointRounding.AwayFromZero);
+            return decimal.Round(Price / 100.00M * Category.TaxPercentage, 2, MidpointRounding.AwayFromZero);
         }
 
-        public decimal CalculateUnitaryTax(int itemQuantity)
-        {
-            return this.CalculateUnitaryTax() * itemQuantity;
-        }
+        public decimal CalculateUnitaryTax(int itemQuantity) => CalculateUnitaryTax() * itemQuantity;
 
         private decimal CalculateUnitaryTaxedAmount()
         {
-            return decimal.Round(this.Price + this.CalculateUnitaryTax(), 2, MidpointRounding.AwayFromZero);
+            return decimal.Round(Price + this.CalculateUnitaryTax(), 2, MidpointRounding.AwayFromZero);
         }
 
         public decimal CalculateTaxedAmount(int itemQuantity)
         {
-            return decimal.Round(this.CalculateUnitaryTaxedAmount() * itemQuantity, 2, MidpointRounding.AwayFromZero);
+            return decimal.Round(CalculateUnitaryTaxedAmount() * itemQuantity, 2, MidpointRounding.AwayFromZero);
         }
     }
 }
