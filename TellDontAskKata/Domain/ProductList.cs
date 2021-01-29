@@ -8,19 +8,10 @@ namespace TellDontAskKata.UseCases
     {
         private readonly IEnumerable<Product> _products;
 
-        public ProductList(IEnumerable<Product> products)
-        {
-            _products = products;
-        }
+        public ProductList(IEnumerable<Product> products) => _products = products;
 
-        public bool Missing(string name)
-        {
-            return _products.All(p => p.Name != name);
-        }
+        public bool Missing(string name) => _products.All(p => p.Name != name);
 
-        public Product GetByName(string name)
-        {
-            return _products.Single(p => p.Name == name);
-        }
+        public Product GetByName(string name) => _products.Single(p => p.Name == name);
     }
 }
