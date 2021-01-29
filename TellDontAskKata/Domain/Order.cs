@@ -28,16 +28,6 @@ namespace TellDontAskKata.Domain
             Status = OrderStatus.Shipped;
         }
 
-        private bool Shipped()
-        {
-            return Status == OrderStatus.Shipped;
-        }
-
-        private bool CannotBeShippedYet()
-        {
-            return Status == OrderStatus.Created || Rejected();
-        }
-
         public void Approve(bool isApproved)
         {
             if (Shipped())
@@ -59,14 +49,12 @@ namespace TellDontAskKata.Domain
             }
         }
 
-        private bool Approved()
-        {
-            return Status == OrderStatus.Approved;
-        }
+        private bool Shipped() => Status == OrderStatus.Shipped;
 
-        private bool Rejected()
-        {
-            return Status == OrderStatus.Rejected;
-        }
+        private bool CannotBeShippedYet() => Status == OrderStatus.Created || Rejected();
+
+        private bool Approved() => Status == OrderStatus.Approved;
+
+        private bool Rejected() => Status == OrderStatus.Rejected;
     }
 }
