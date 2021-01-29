@@ -34,7 +34,7 @@ namespace TellDontAskKata.UseCases
 
         private async Task<List<OrderItem>> CreateOrderItems(SellItemsRequest request)
         {
-            var productList = await _productCatalog.GetListByNamesAsync(request.Requests.Select(r => r.Name));
+            var productList = await _productCatalog.GetListByNamesAsync(request.ProductNames);
             
             var orderItems = new List<OrderItem>();
 
@@ -45,12 +45,10 @@ namespace TellDontAskKata.UseCases
                 
                 var product = productList.GetByName(itemRequest.Name);
 
-                var itemQuantity = itemRequest.Quantity;
-
                 var orderItem = new OrderItem
                 {
                     Product = product,
-                    Quantity = itemQuantity
+                    Quantity = itemRequest.Quantity
                 };
 
                 orderItems.Add(orderItem);
