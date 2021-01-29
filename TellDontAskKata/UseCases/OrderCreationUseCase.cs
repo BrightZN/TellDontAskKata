@@ -36,25 +36,16 @@ namespace TellDontAskKata.UseCases
                     throw new UnknownProductException();
                 }
 
-                // need to find the C# equivalent of Java BigDecimal.setScale(2, HALF_UP)
                 var itemQuantity = itemRequest.Quantity;
 
                 var orderItem = new OrderItem
                 {
                     Product = product,
-                    Quantity = itemQuantity,
-                    Tax = product.CalculateUnitaryTax(itemQuantity),
-                    TaxedAmount = product.CalculateTaxedAmount(itemQuantity)
+                    Quantity = itemQuantity
                 };
 
                 order.Items.Add(orderItem);
-
-                //order.Total += taxedAmount;
-                //order.Tax += taxAmount;
             }
-
-            //order.Total = order.Items.Sum(i => i.TaxedAmount);
-            //order.Tax = order.Items.Sum(i => i.Tax);
 
             await _orderRepository.SaveAsync(order);
         }
