@@ -6,9 +6,9 @@ namespace TellDontAskKata.UseCases
 {
     public class ProductList
     {
-        private List<Product> _products;
+        private readonly IEnumerable<Product> _products;
 
-        public ProductList(List<Product> products)
+        public ProductList(IEnumerable<Product> products)
         {
             _products = products;
         }
