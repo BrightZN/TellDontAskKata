@@ -4,12 +4,18 @@ namespace TellDontAskKata.Domain
 {
     public class Category
     {
-        public string Name { get; set; }
-        public decimal TaxPercentage { get; set; }
+        public Category(string name, decimal taxPercentage)
+        {
+            Name = name;
+            TaxPercentage = taxPercentage;
+        }
+
+        public string Name { get; }
+        public decimal TaxPercentage { get; }
 
         public decimal CalculateUnitaryTax(decimal price)
         {
-            return decimal.Round(price / 100.00M * this.TaxPercentage, 2, MidpointRounding.AwayFromZero);
+            return decimal.Round(price / 100.00M * TaxPercentage, 2, MidpointRounding.AwayFromZero);
         }
     }
 }
