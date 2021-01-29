@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TellDontAskKata.Domain;
 using TellDontAskKata.Repositories;
+using TellDontAskKata.UseCases;
 
 namespace TellDontAskKata.Tests.Doubles
 {
@@ -18,6 +19,11 @@ namespace TellDontAskKata.Tests.Doubles
         public Task<Product> GetByNameAsync(string name)
         {
             return Task.FromResult(_products.FirstOrDefault(p => p.Name == name));
+        }
+
+        public Task<ProductList> GetListByNamesAsync(IEnumerable<string> names)
+        {
+            return Task.FromResult(new ProductList());
         }
     }
 }

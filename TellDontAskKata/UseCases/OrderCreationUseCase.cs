@@ -20,21 +20,30 @@ namespace TellDontAskKata.UseCases
 
         public async Task RunAsync(SellItemsRequest request)
         {
+            var orderItems = await CreateOrderItems(request);
+
             var order = new Order
             {
                 Status = OrderStatus.Created,
-                Items = new List<OrderItem>(),
+                Items = orderItems,
                 Currency = "EUR"
             };
 
-            foreach(var itemRequest in request.Requests)
+            await _orderRepository.SaveAsync(order);
+        }
+
+        private async Task<List<OrderItem>> CreateOrderItems(SellItemsRequest request)
+        {
+            ProductList productList = await _productCatalog.GetListByNamesAsync(request.Requests.Select(r => r.Name));
+            
+            var orderItems = new List<OrderItem>();
+
+            foreach (var itemRequest in request.Requests)
             {
                 var product = await _productCatalog.GetByNameAsync(itemRequest.Name);
 
-                if(product == null)
-                {
+                if (product == null)
                     throw new UnknownProductException();
-                }
 
                 var itemQuantity = itemRequest.Quantity;
 
@@ -44,10 +53,10 @@ namespace TellDontAskKata.UseCases
                     Quantity = itemQuantity
                 };
 
-                order.Items.Add(orderItem);
+                orderItems.Add(orderItem);
             }
 
-            await _orderRepository.SaveAsync(order);
+            return orderItems;
         }
     }
 }
