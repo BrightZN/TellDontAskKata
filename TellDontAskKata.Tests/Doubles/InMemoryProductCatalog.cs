@@ -23,7 +23,7 @@ namespace TellDontAskKata.Tests.Doubles
 
         public Task<ProductList> GetListByNamesAsync(IEnumerable<string> names)
         {
-            return Task.FromResult(new ProductList());
+            return Task.FromResult(new ProductList(_products));
         }
     }
 }

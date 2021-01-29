@@ -34,16 +34,16 @@ namespace TellDontAskKata.UseCases
 
         private async Task<List<OrderItem>> CreateOrderItems(SellItemsRequest request)
         {
-            ProductList productList = await _productCatalog.GetListByNamesAsync(request.Requests.Select(r => r.Name));
+            var productList = await _productCatalog.GetListByNamesAsync(request.Requests.Select(r => r.Name));
             
             var orderItems = new List<OrderItem>();
 
             foreach (var itemRequest in request.Requests)
             {
-                var product = await _productCatalog.GetByNameAsync(itemRequest.Name);
-
-                if (product == null)
+                if(productList.Missing(itemRequest.Name))
                     throw new UnknownProductException();
+                
+                var product = productList.GetByName(itemRequest.Name);
 
                 var itemQuantity = itemRequest.Quantity;
 
