@@ -1,8 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using TellDontAskKata.Domain;
 
-namespace TellDontAskKata.UseCases
+namespace TellDontAskKata.Domain
 {
     public class ProductList
     {

@@ -12,36 +12,34 @@ namespace TellDontAskKata.Tests.UseCases
     public class OrderCreationUseCaseTest
     {
         private readonly TestOrderRepository _orderRepository;
-        private readonly Category _food;
-        private readonly IProductCatalog _productCatalog;
         private readonly OrderCreationUseCase _useCase;
 
         public OrderCreationUseCaseTest()
         {
             _orderRepository = new TestOrderRepository();
 
-            _food = new Category
+            var food = new Category
             {
                 Name = "food",
                 TaxPercentage = 10.00M
             };
 
-            _productCatalog = new InMemoryProductCatalog(new List<Product> { 
+            IProductCatalog productCatalog = new InMemoryProductCatalog(new List<Product> { 
                 new Product 
                 {
                     Name = "salad",
                     Price = 3.56M,
-                    Category = _food
+                    Category = food
                 },
                 new Product
                 {
                     Name = "tomato",
                     Price = 4.65M,
-                    Category = _food
+                    Category = food
                 }
             });
 
-            _useCase = new OrderCreationUseCase(_orderRepository, _productCatalog);
+            _useCase = new OrderCreationUseCase(_orderRepository, productCatalog);
         }
 
         [Fact]
