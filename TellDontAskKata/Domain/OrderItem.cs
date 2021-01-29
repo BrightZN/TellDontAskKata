@@ -4,8 +4,14 @@ namespace TellDontAskKata.Domain
 {
     public class OrderItem
     {
-        public Product Product { get; set; }
-        public int Quantity { get; set; }
+        private OrderItem(Product product, int quantity)
+        {
+            Product = product;
+            Quantity = quantity;
+        }
+
+        public Product Product { get; }
+        public int Quantity { get; }
         public decimal TaxedAmount => Product.CalculateTaxedAmount(Quantity);
         public decimal Tax => Product.CalculateUnitaryTax(Quantity);
 
@@ -13,14 +19,8 @@ namespace TellDontAskKata.Domain
         {
             if (productList.Missing(itemName))
                 throw new UnknownProductException();
-            
-            var orderItem = new OrderItem
-            {
-                Product = productList.GetByName(itemName),
-                Quantity = itemQuantity
-            };
-            
-            return orderItem;
+
+            return new OrderItem(productList.GetByName(itemName), itemQuantity);
         }
     }
 }
