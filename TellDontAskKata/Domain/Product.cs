@@ -8,7 +8,7 @@ namespace TellDontAskKata.Domain
         public decimal Price { get; set; }
         public Category Category { get; set; }
 
-        public decimal CalculateUnitaryTax()
+        private decimal CalculateUnitaryTax()
         {
             return decimal.Round(this.Price / 100.00M * this.Category.TaxPercentage, 2, MidpointRounding.AwayFromZero);
         }
@@ -18,7 +18,7 @@ namespace TellDontAskKata.Domain
             return this.CalculateUnitaryTax() * itemQuantity;
         }
 
-        public decimal CalculateUnitaryTaxedAmount()
+        private decimal CalculateUnitaryTaxedAmount()
         {
             return decimal.Round(this.Price + this.CalculateUnitaryTax(), 2, MidpointRounding.AwayFromZero);
         }
