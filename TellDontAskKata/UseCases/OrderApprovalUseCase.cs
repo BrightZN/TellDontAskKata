@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using TellDontAskKata.Domain;
 using TellDontAskKata.Repositories;
 
 namespace TellDontAskKata.UseCases

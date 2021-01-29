@@ -39,11 +39,10 @@ namespace TellDontAskKata.UseCases
                 else
                 {
                     // need to find the C# equivalent of Java BigDecimal.setScale(2, HALF_UP)
-                    
-                    decimal unitaryTax = decimal.Round(product.Price / 100.00M * product.Category.TaxPercentage, 2, MidpointRounding.AwayFromZero); // .setScale(2, HALF_UP)
-                    decimal unitaryTaxedAmount = decimal.Round(product.Price + unitaryTax, 2, MidpointRounding.AwayFromZero); // .setScale(2, HALF_UP)
+
+                    decimal unitaryTaxedAmount = decimal.Round(product.Price + product.CalculateUnitaryTax(), 2, MidpointRounding.AwayFromZero); // .setScale(2, HALF_UP)
                     decimal taxedAmount = decimal.Round(unitaryTaxedAmount * itemRequest.Quantity, 2, MidpointRounding.AwayFromZero); // .setScale(2, HALF_UP)
-                    decimal taxAmount = unitaryTax * itemRequest.Quantity;
+                    decimal taxAmount = product.CalculateUnitaryTax() * itemRequest.Quantity;
 
                     var orderItem = new OrderItem
                     {
