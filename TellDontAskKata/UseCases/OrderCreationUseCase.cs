@@ -24,9 +24,7 @@ namespace TellDontAskKata.UseCases
             {
                 Status = OrderStatus.Created,
                 Items = new List<OrderItem>(),
-                Currency = "EUR",
-                Total = 0.00M,
-                Tax = 0.00M
+                Currency = "EUR"
             };
 
             foreach(var itemRequest in request.Requests)
@@ -55,8 +53,8 @@ namespace TellDontAskKata.UseCases
                 //order.Tax += taxAmount;
             }
 
-            order.Total = order.Items.Sum(i => i.TaxedAmount);
-            order.Tax = order.Items.Sum(i => i.Tax);
+            //order.Total = order.Items.Sum(i => i.TaxedAmount);
+            //order.Tax = order.Items.Sum(i => i.Tax);
 
             await _orderRepository.SaveAsync(order);
         }
