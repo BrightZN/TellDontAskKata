@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TellDontAskKata.Domain;
 using TellDontAskKata.Repositories;
@@ -36,29 +37,26 @@ namespace TellDontAskKata.UseCases
                 {
                     throw new UnknownProductException();
                 }
-                else
+
+                // need to find the C# equivalent of Java BigDecimal.setScale(2, HALF_UP)
+                var itemQuantity = itemRequest.Quantity;
+
+                var orderItem = new OrderItem
                 {
-                    // need to find the C# equivalent of Java BigDecimal.setScale(2, HALF_UP)
-                    var itemQuantity = itemRequest.Quantity;
-                    
-                    decimal unitaryTaxedAmount = decimal.Round(product.Price + product.CalculateUnitaryTax(), 2, MidpointRounding.AwayFromZero); // .setScale(2, HALF_UP)
-                    decimal taxedAmount = decimal.Round(unitaryTaxedAmount * itemQuantity, 2, MidpointRounding.AwayFromZero); // .setScale(2, HALF_UP)
-                    decimal taxAmount = product.CalculateUnitaryTax() * itemQuantity;
+                    Product = product,
+                    Quantity = itemQuantity,
+                    Tax = product.CalculateUnitaryTax(itemQuantity),
+                    TaxedAmount = product.CalculateTaxedAmount(itemQuantity)
+                };
 
-                    var orderItem = new OrderItem
-                    {
-                        Product = product,
-                        Quantity = itemQuantity,
-                        Tax = taxAmount,
-                        TaxedAmount = taxedAmount
-                    };
+                order.Items.Add(orderItem);
 
-                    order.Items.Add(orderItem);
-
-                    order.Total += taxedAmount;
-                    order.Tax += taxAmount;
-                }
+                //order.Total += taxedAmount;
+                //order.Tax += taxAmount;
             }
+
+            order.Total = order.Items.Sum(i => i.TaxedAmount);
+            order.Tax = order.Items.Sum(i => i.Tax);
 
             await _orderRepository.SaveAsync(order);
         }
