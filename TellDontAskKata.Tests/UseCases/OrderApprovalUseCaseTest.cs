@@ -20,12 +20,8 @@ namespace TellDontAskKata.Tests.UseCases
         [Fact]
         public async Task Approves_Existing_Order()
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Created,
-                Id = 1
-            };
-
+            var initialOrder = new Order(1, OrderStatus.Created);
+            
             _orderRepository.AddOrder(initialOrder);
 
             var request = new OrderApprovalRequest
@@ -44,11 +40,7 @@ namespace TellDontAskKata.Tests.UseCases
         [Fact]
         public async Task Rejects_Existing_Order()
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Created,
-                Id = 1
-            };
+            var initialOrder = new Order(1, OrderStatus.Created);
 
             _orderRepository.AddOrder(initialOrder);
 
@@ -68,11 +60,7 @@ namespace TellDontAskKata.Tests.UseCases
         [Fact]
         public async Task Cannot_Approve_Rejected_Order()
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Rejected,
-                Id = 1
-            };
+            var initialOrder = new Order(1, OrderStatus.Rejected);
 
             _orderRepository.AddOrder(initialOrder);
 
@@ -90,11 +78,7 @@ namespace TellDontAskKata.Tests.UseCases
         [Fact]
         public async Task Cannot_Reject_Approved_Order()
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Approved,
-                Id = 1
-            };
+            var initialOrder = new Order(1, OrderStatus.Approved);
 
             _orderRepository.AddOrder(initialOrder);
 
@@ -112,11 +96,7 @@ namespace TellDontAskKata.Tests.UseCases
         [Fact]
         public async Task Cannot_Approve_Shipped_Order()
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Shipped,
-                Id = 1
-            };
+            var initialOrder = new Order(1, OrderStatus.Shipped);
 
             _orderRepository.AddOrder(initialOrder);
 
@@ -134,11 +114,7 @@ namespace TellDontAskKata.Tests.UseCases
         [Fact]
         public async Task Cannot_Reject_Shipped_Order()
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Shipped,
-                Id = 1
-            };
+            var initialOrder = new Order(1, OrderStatus.Shipped);
 
             _orderRepository.AddOrder(initialOrder);
 

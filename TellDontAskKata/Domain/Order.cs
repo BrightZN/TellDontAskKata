@@ -2,18 +2,32 @@
 using System.Linq;
 using System.Threading.Tasks;
 using TellDontAskKata.Services;
-using TellDontAskKata.UseCases;
 
 namespace TellDontAskKata.Domain
 {
     public class Order
     {
-        public int Id { get; set; }
+        public Order(int id, OrderStatus status)
+        {
+            Id = id;
+            Status = status;
+            Items = Enumerable.Empty<OrderItem>();
+        }
+
+        public Order(string currency, IEnumerable<OrderItem> items)
+        {
+            Id = 0;
+            Currency = currency;
+            Items = items;
+            Status = OrderStatus.Created;
+        }
+
+        public int Id { get; }
         public decimal Total => Items.Sum(i => i.TaxedAmount);
-        public string Currency { get; set; }
-        public IEnumerable<OrderItem> Items { get; set; }
+        public string Currency { get; }
+        public IEnumerable<OrderItem> Items { get; }
         public decimal Tax => Items.Sum(i => i.Tax);
-        public OrderStatus Status { get; set; }
+        public OrderStatus Status { get; private set; }
 
         public async Task ShipAsync(IShipmentService shipmentService)
         {

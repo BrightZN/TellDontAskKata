@@ -22,12 +22,7 @@ namespace TellDontAskKata.UseCases
         {
             var orderItems = await CreateOrderItemsAsync(request);
 
-            var order = new Order
-            {
-                Status = OrderStatus.Created,
-                Items = orderItems,
-                Currency = "EUR"
-            };
+            var order = new Order("EUR", orderItems);
 
             await _orderRepository.SaveAsync(order);
         }

@@ -23,11 +23,7 @@ namespace TellDontAskKata.Tests.UseCases
         [Fact]
         public async Task Ships_Approved_Order()
         {
-            var initialOrder = new Order
-            {
-                Id = 1,
-                Status = OrderStatus.Approved
-            };
+            var initialOrder = new Order(1, OrderStatus.Approved);
 
             _orderRepository.AddOrder(initialOrder);
 
@@ -45,11 +41,7 @@ namespace TellDontAskKata.Tests.UseCases
         [Fact]
         public async Task Created_Order_Cannot_Be_Shipped()
         {
-            var initialOrder = new Order
-            {
-                Id = 1,
-                Status = OrderStatus.Created
-            };
+            var initialOrder = new Order(1, OrderStatus.Created);
 
             _orderRepository.AddOrder(initialOrder);
 
@@ -67,11 +59,7 @@ namespace TellDontAskKata.Tests.UseCases
         [Fact]
         public async Task Rejected_Order_Cannot_Be_Shipped()
         {
-            var initialOrder = new Order
-            {
-                Id = 1,
-                Status = OrderStatus.Rejected
-            };
+            var initialOrder = new Order(1, OrderStatus.Rejected);
 
             _orderRepository.AddOrder(initialOrder);
 
@@ -89,11 +77,7 @@ namespace TellDontAskKata.Tests.UseCases
         [Fact]
         public async Task Shipped_Order_Cannot_Be_Shipped_Again()
         {
-            var initialOrder = new Order
-            {
-                Id = 1,
-                Status = OrderStatus.Shipped
-            };
+            var initialOrder = new Order(1, OrderStatus.Shipped);
 
             _orderRepository.AddOrder(initialOrder);
 
