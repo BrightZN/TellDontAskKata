@@ -24,6 +24,14 @@
 
         private class CreatedStatus : OrderStatus
         {
+            public override void CanBeShipped()
+            {
+                throw new OrderCannotBeShippedException();
+            }
+        }
+
+        public virtual void CanBeShipped()
+        {
             
         }
     }

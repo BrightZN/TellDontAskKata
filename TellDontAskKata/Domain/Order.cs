@@ -39,8 +39,10 @@ namespace TellDontAskKata.Domain
              *
              * Status = OrderStatus.Shipped;
              */
+
+            Status.CanBeShipped();
             
-            if (CannotBeShippedYet())
+            if (Status == OrderStatus.Rejected)
                 throw new OrderCannotBeShippedException();
 
             if (Shipped())
@@ -65,7 +67,7 @@ namespace TellDontAskKata.Domain
 
             if (isApproved)
             {
-                if (Rejected())
+                if (Status == OrderStatus.Rejected)
                     throw new RejectedOrderCannotBeApprovedException();
 
                 Status = OrderStatus.Approved;
@@ -81,10 +83,6 @@ namespace TellDontAskKata.Domain
 
         private bool Shipped() => Status == OrderStatus.Shipped;
 
-        private bool CannotBeShippedYet() => Status == OrderStatus.Created || Rejected();
-
         private bool Approved() => Status == OrderStatus.Approved;
-
-        private bool Rejected() => Status == OrderStatus.Rejected;
     }
 }
