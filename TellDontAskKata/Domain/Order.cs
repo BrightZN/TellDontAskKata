@@ -31,6 +31,15 @@ namespace TellDontAskKata.Domain
 
         public async Task ShipAsync(IShipmentService shipmentService)
         {
+            /* could the status check code be replaced with:
+             * 
+             * Status.CanBeShipped();
+             *
+             * await shipmentService.ShipAsync(this);
+             *
+             * Status = OrderStatus.Shipped;
+             */
+            
             if (CannotBeShippedYet())
                 throw new OrderCannotBeShippedException();
 
@@ -44,6 +53,13 @@ namespace TellDontAskKata.Domain
 
         public void Approve(bool isApproved)
         {
+            /* could the status check code be replaced with:
+             * 
+             * Status.CanBeApproved(isApproved);
+             *
+             * Status = isApproved ? OrderStatus.Approved : OrderStatus.Rejected
+             */
+            
             if (Shipped())
                 throw new ShippedOrdersCannotBeChangedException();
 
