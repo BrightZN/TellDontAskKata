@@ -31,22 +31,7 @@ namespace TellDontAskKata.Domain
 
         public async Task ShipAsync(IShipmentService shipmentService)
         {
-            /* could the status check code be replaced with:
-             * 
-             * Status.CanBeShipped();
-             *
-             * await shipmentService.ShipAsync(this);
-             *
-             * Status = OrderStatus.Shipped;
-             */
-
             Status.CanBeShipped();
-            
-            if (Status == OrderStatus.Rejected)
-                throw new OrderCannotBeShippedException();
-
-            if (Shipped())
-                throw new OrderCannotBeShippedTwiceException();
 
             await shipmentService.ShipAsync(this);
 
@@ -62,7 +47,7 @@ namespace TellDontAskKata.Domain
              * Status = isApproved ? OrderStatus.Approved : OrderStatus.Rejected
              */
             
-            if (Shipped())
+            if (Status == OrderStatus.Shipped)
                 throw new ShippedOrdersCannotBeChangedException();
 
             if (isApproved)
@@ -80,8 +65,6 @@ namespace TellDontAskKata.Domain
                 Status = OrderStatus.Rejected;
             }
         }
-
-        private bool Shipped() => Status == OrderStatus.Shipped;
 
         private bool Approved() => Status == OrderStatus.Approved;
     }

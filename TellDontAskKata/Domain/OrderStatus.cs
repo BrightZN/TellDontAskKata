@@ -14,12 +14,18 @@
 
         private class RejectedStatus : OrderStatus
         {
-            
+            public override void CanBeShipped()
+            {
+                throw new OrderCannotBeShippedException();
+            }
         }
 
         private class ShippedStatus : OrderStatus
         {
-            
+            public override void CanBeShipped()
+            {
+                throw new OrderCannotBeShippedTwiceException();
+            }
         }
 
         private class CreatedStatus : OrderStatus
