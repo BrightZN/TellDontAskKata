@@ -41,11 +41,23 @@
             public override void ShouldBeShippable() => throw new OrderCannotBeShippedException();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <exception cref="OrderCannotBeShippedException"></exception>
+        /// <exception cref="OrderCannotBeShippedTwiceException"></exception>
         public virtual void ShouldBeShippable()
         {
             
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <exception cref="ApprovedOrderCannotBeRejectedException"></exception>
+        /// <exception cref="RejectedOrderCannotBeApprovedException"></exception>
+        /// <exception cref="ShippedOrdersCannotBeChangedException"></exception>
+        /// <param name="isApproved"></param>
         public virtual void ShouldBeApprovable(bool isApproved)
         {
             
