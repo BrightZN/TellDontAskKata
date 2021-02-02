@@ -40,13 +40,6 @@ namespace TellDontAskKata.Domain
 
         public void Approve(bool isApproved)
         {
-            /* could the status check code be replaced with:
-             * 
-             * Status.CanBeApproved(isApproved);
-             *
-             * Status = isApproved ? OrderStatus.Approved : OrderStatus.Rejected
-             */
-
             Status.ShouldBeApprovable(isApproved);
 
             Status = isApproved ? OrderStatus.Approved : OrderStatus.Rejected;
