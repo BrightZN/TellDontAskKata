@@ -9,7 +9,14 @@
 
         private class ApprovedStatus : OrderStatus
         {
-            
+
+            public override void CanBeApproved(bool isApproved)
+            {
+                if (isApproved)
+                    return;
+                
+                throw new ApprovedOrderCannotBeRejectedException();
+            }
         }
 
         private class RejectedStatus : OrderStatus
@@ -18,6 +25,12 @@
             {
                 throw new OrderCannotBeShippedException();
             }
+
+            public override void CanBeApproved(bool isApproved)
+            {
+                if(isApproved)
+                    throw new RejectedOrderCannotBeApprovedException();
+            }
         }
 
         private class ShippedStatus : OrderStatus
@@ -25,6 +38,11 @@
             public override void CanBeShipped()
             {
                 throw new OrderCannotBeShippedTwiceException();
+            }
+
+            public override void CanBeApproved(bool isApproved)
+            {
+                throw new ShippedOrdersCannotBeChangedException();
             }
         }
 

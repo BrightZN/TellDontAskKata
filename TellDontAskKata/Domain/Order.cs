@@ -48,26 +48,8 @@ namespace TellDontAskKata.Domain
              */
 
             Status.CanBeApproved(isApproved);
-            
-            if (Status == OrderStatus.Shipped)
-                throw new ShippedOrdersCannotBeChangedException();
 
-            if (isApproved)
-            {
-                if (Status == OrderStatus.Rejected)
-                    throw new RejectedOrderCannotBeApprovedException();
-
-                Status = OrderStatus.Approved;
-            }
-            else
-            {
-                if(Approved())
-                    throw new ApprovedOrderCannotBeRejectedException();
-                
-                Status = OrderStatus.Rejected;
-            }
+            Status = isApproved ? OrderStatus.Approved : OrderStatus.Rejected;
         }
-
-        private bool Approved() => Status == OrderStatus.Approved;
     }
 }
