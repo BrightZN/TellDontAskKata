@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Threading.Tasks;
 using TellDontAskKata.Domain;
-using TellDontAskKata.Repositories;
 using TellDontAskKata.Tests.Doubles;
 using TellDontAskKata.UseCases;
 using Xunit;
@@ -54,6 +53,7 @@ namespace TellDontAskKata.Tests.UseCases
 
             Assert.Equal(OrderStatus.Created, createdOrder.Status);
             Assert.Equal(23.20M, createdOrder.Total);
+            Assert.Equal(2.13M, createdOrder.Tax);
             Assert.Equal("EUR", createdOrder.Currency);
             Assert.Equal(2, createdOrder.Items.Count());
 
