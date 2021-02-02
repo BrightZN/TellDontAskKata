@@ -46,6 +46,8 @@ namespace TellDontAskKata.Domain
              *
              * Status = isApproved ? OrderStatus.Approved : OrderStatus.Rejected
              */
+
+            Status.CanBeApproved(isApproved);
             
             if (Status == OrderStatus.Shipped)
                 throw new ShippedOrdersCannotBeChangedException();

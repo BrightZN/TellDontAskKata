@@ -40,5 +40,10 @@
         {
             
         }
+
+        public virtual void CanBeApproved(bool isApproved)
+        {
+            
+        }
     }
 }
