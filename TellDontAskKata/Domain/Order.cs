@@ -31,7 +31,7 @@ namespace TellDontAskKata.Domain
 
         public async Task ShipAsync(IShipmentService shipmentService)
         {
-            Status.CanBeShipped();
+            Status.ShouldBeShippable();
 
             await shipmentService.ShipAsync(this);
 
@@ -47,7 +47,7 @@ namespace TellDontAskKata.Domain
              * Status = isApproved ? OrderStatus.Approved : OrderStatus.Rejected
              */
 
-            Status.CanBeApproved(isApproved);
+            Status.ShouldBeApprovable(isApproved);
 
             Status = isApproved ? OrderStatus.Approved : OrderStatus.Rejected;
         }

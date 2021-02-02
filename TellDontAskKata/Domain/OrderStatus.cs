@@ -10,7 +10,7 @@
         private class ApprovedStatus : OrderStatus
         {
 
-            public override void CanBeApproved(bool isApproved)
+            public override void ShouldBeApprovable(bool isApproved)
             {
                 if (isApproved)
                     return;
@@ -21,12 +21,12 @@
 
         private class RejectedStatus : OrderStatus
         {
-            public override void CanBeShipped()
+            public override void ShouldBeShippable()
             {
                 throw new OrderCannotBeShippedException();
             }
 
-            public override void CanBeApproved(bool isApproved)
+            public override void ShouldBeApprovable(bool isApproved)
             {
                 if(isApproved)
                     throw new RejectedOrderCannotBeApprovedException();
@@ -35,12 +35,12 @@
 
         private class ShippedStatus : OrderStatus
         {
-            public override void CanBeShipped()
+            public override void ShouldBeShippable()
             {
                 throw new OrderCannotBeShippedTwiceException();
             }
 
-            public override void CanBeApproved(bool isApproved)
+            public override void ShouldBeApprovable(bool isApproved)
             {
                 throw new ShippedOrdersCannotBeChangedException();
             }
@@ -48,18 +48,18 @@
 
         private class CreatedStatus : OrderStatus
         {
-            public override void CanBeShipped()
+            public override void ShouldBeShippable()
             {
                 throw new OrderCannotBeShippedException();
             }
         }
 
-        public virtual void CanBeShipped()
+        public virtual void ShouldBeShippable()
         {
             
         }
 
-        public virtual void CanBeApproved(bool isApproved)
+        public virtual void ShouldBeApprovable(bool isApproved)
         {
             
         }
