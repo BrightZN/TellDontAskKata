@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TellDontAskKata.Domain;
 using TellDontAskKata.Repositories;
@@ -11,15 +12,13 @@ namespace TellDontAskKata.Tests.UseCases;
 public class OrderCreationUseCaseTest
 {
     private readonly TestOrderRepository _orderRepository;
-    private readonly Category _food;
-    private readonly IProductCatalog _productCatalog;
     private readonly OrderCreationUseCase _useCase;
 
     public OrderCreationUseCaseTest()
     {
         _orderRepository = new TestOrderRepository();
 
-        _food = new Category
+        var food = new Category
         {
             Name = "food",
             TaxPercentage = 10.00M
@@ -30,19 +29,19 @@ public class OrderCreationUseCaseTest
             {
                 Name = "salad",
                 Price = 3.56M,
-                Category = _food
+                Category = food
             },
             new()
             {
                 Name = "tomato",
                 Price = 4.65M,
-                Category = _food
+                Category = food
             }
         };
         
-        _productCatalog = new InMemoryProductCatalog(products);
+        IProductCatalog productCatalog = new InMemoryProductCatalog(products);
 
-        _useCase = new OrderCreationUseCase(_orderRepository, _productCatalog);
+        _useCase = new OrderCreationUseCase(_orderRepository, productCatalog);
     }
 
     [Fact]
@@ -71,6 +70,7 @@ public class OrderCreationUseCaseTest
 
         Assert.Equal(OrderStatus.Created, createdOrder.Status);
         Assert.Equal(23.20M, createdOrder.Total);
+        Assert.Equal(createdOrder.Items.Sum(i => i.Tax), createdOrder.Tax);
         Assert.Equal("EUR", createdOrder.Currency);
         Assert.Equal(2, createdOrder.Items.Count);
 

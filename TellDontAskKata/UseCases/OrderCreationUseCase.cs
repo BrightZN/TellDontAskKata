@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using TellDontAskKata.Domain;
 using TellDontAskKata.Repositories;
@@ -11,7 +10,8 @@ public class OrderCreationUseCase
     private readonly IOrderRepository _orderRepository;
     private readonly IProductCatalog _productCatalog;
 
-    public OrderCreationUseCase(IOrderRepository orderRepository, IProductCatalog productCatalog)
+    public OrderCreationUseCase(
+        IOrderRepository orderRepository, IProductCatalog productCatalog)
     {
         _orderRepository = orderRepository;
         _productCatalog = productCatalog;
@@ -19,38 +19,37 @@ public class OrderCreationUseCase
 
     public async Task RunAsync(SellItemsRequest request)
     {
+        var productNames = GetProductNames(request);
+        var products = await _productCatalog.GetByNamesAsync(productNames);
+
+        var order = CreateOrder(request, products);
+
+        await _orderRepository.SaveAsync(order);
+    }
+
+    private static Order CreateOrder(SellItemsRequest request, ProductList products)
+    {
         var order = new Order
         {
             Status = OrderStatus.Created,
-            Items = new List<OrderItem>(),
             Currency = "EUR",
-            Total = 0.00M,
-            Tax = 0.00M
         };
 
-        var productNames = request.Requests.Select(r => r.Name).ToArray();
-
-        var products = await _productCatalog.GetByNamesAsync(productNames);
-
-        foreach(var itemRequest in request.Requests)
+        foreach (var itemRequest in request.Requests)
         {
             var product = products.FindByName(itemRequest.Name);
 
-            if(product is null)
+            if (product is null)
                 throw new UnknownProductException();
-            
-            // need to find the C# equivalent of Java BigDecimal.setScale(2, HALF_UP)
-                    
-            var quantity = itemRequest.Quantity;
 
-            var orderItem = new OrderItem(product, quantity);
-
-            order.Items.Add(orderItem);
-
-            order.Total += orderItem.TaxedAmount;
-            order.Tax += orderItem.Tax;
+            order.AddItem(product, itemRequest.Quantity);
         }
 
-        await _orderRepository.SaveAsync(order);
+        return order;
+    }
+
+    private static string[] GetProductNames(SellItemsRequest request)
+    {
+        return request.Requests.Select(r => r.Name).ToArray();
     }
 }
