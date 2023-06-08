@@ -21,6 +21,20 @@ namespace TellDontAskKata.Tests.UseCases
         }
 
         [Fact]
+        public async Task Throws_Exception_When_Order_Is_Null()
+        {
+            var request = new OrderShipmentRequest
+            {
+                OrderId = 1
+            };
+
+            await Assert.ThrowsAsync<OrderNotFoundException>(() => _useCase.RunAsync(request));
+
+            Assert.Null(_orderRepository.SavedOrder);
+            Assert.Null(_shipmentService.ShippedOrder);
+        }
+
+        [Fact]
         public async Task Ships_Approved_Order()
         {
             var initialOrder = new Order

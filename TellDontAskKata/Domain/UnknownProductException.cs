@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TellDontAskKata.UseCases
+namespace TellDontAskKata.Domain
 {
     public class UnknownProductException : Exception
     {
