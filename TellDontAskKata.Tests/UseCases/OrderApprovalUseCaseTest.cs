@@ -152,5 +152,19 @@ namespace TellDontAskKata.Tests.UseCases
 
             Assert.Null(_orderRepository.SavedOrder);
         }
+
+        [Fact]
+        public async Task Throws_Exception_When_Order_Is_Null()
+        {
+            var request = new OrderApprovalRequest
+            {
+                OrderId = 1,
+                Approved = true
+            };
+
+            await Assert.ThrowsAsync<OrderNotFoundException>(() => _useCase.RunAsync(request));
+
+            Assert.Null(_orderRepository.SavedOrder);
+        }
     }
 }
