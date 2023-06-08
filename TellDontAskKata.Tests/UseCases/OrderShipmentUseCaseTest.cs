@@ -4,122 +4,121 @@ using TellDontAskKata.Tests.Doubles;
 using TellDontAskKata.UseCases;
 using Xunit;
 
-namespace TellDontAskKata.Tests.UseCases
+namespace TellDontAskKata.Tests.UseCases;
+
+public class OrderShipmentUseCaseTest
 {
-    public class OrderShipmentUseCaseTest
+    private readonly TestOrderRepository _orderRepository;
+    private readonly TestShipmentService _shipmentService;
+    private readonly OrderShipmentUseCase _useCase;
+
+    public OrderShipmentUseCaseTest()
     {
-        private readonly TestOrderRepository _orderRepository;
-        private readonly TestShipmentService _shipmentService;
-        private readonly OrderShipmentUseCase _useCase;
+        _orderRepository = new TestOrderRepository();
+        _shipmentService = new TestShipmentService();
 
-        public OrderShipmentUseCaseTest()
+        _useCase = new OrderShipmentUseCase(_orderRepository, _shipmentService);
+    }
+
+    [Fact]
+    public async Task Throws_Exception_When_Order_Is_Null()
+    {
+        var request = new OrderShipmentRequest
         {
-            _orderRepository = new TestOrderRepository();
-            _shipmentService = new TestShipmentService();
+            OrderId = 1
+        };
 
-            _useCase = new OrderShipmentUseCase(_orderRepository, _shipmentService);
-        }
+        await Assert.ThrowsAsync<OrderNotFoundException>(() => _useCase.RunAsync(request));
 
-        [Fact]
-        public async Task Throws_Exception_When_Order_Is_Null()
+        Assert.Null(_orderRepository.SavedOrder);
+        Assert.Null(_shipmentService.ShippedOrder);
+    }
+
+    [Fact]
+    public async Task Ships_Approved_Order()
+    {
+        var initialOrder = new Order
         {
-            var request = new OrderShipmentRequest
-            {
-                OrderId = 1
-            };
+            Id = 1,
+            Status = OrderStatus.Approved
+        };
 
-            await Assert.ThrowsAsync<OrderNotFoundException>(() => _useCase.RunAsync(request));
+        _orderRepository.AddOrder(initialOrder);
 
-            Assert.Null(_orderRepository.SavedOrder);
-            Assert.Null(_shipmentService.ShippedOrder);
-        }
-
-        [Fact]
-        public async Task Ships_Approved_Order()
+        var request = new OrderShipmentRequest
         {
-            var initialOrder = new Order
-            {
-                Id = 1,
-                Status = OrderStatus.Approved
-            };
+            OrderId = 1
+        };
 
-            _orderRepository.AddOrder(initialOrder);
+        await _useCase.RunAsync(request);
 
-            var request = new OrderShipmentRequest
-            {
-                OrderId = 1
-            };
+        Assert.Equal(OrderStatus.Shipped, _orderRepository.SavedOrder.Status);
+        Assert.Equal(_shipmentService.ShippedOrder, initialOrder);
+    }
 
-            await _useCase.RunAsync(request);
-
-            Assert.Equal(OrderStatus.Shipped, _orderRepository.SavedOrder.Status);
-            Assert.Equal(_shipmentService.ShippedOrder, initialOrder);
-        }
-
-        [Fact]
-        public async Task Created_Order_Cannot_Be_Shipped()
+    [Fact]
+    public async Task Created_Order_Cannot_Be_Shipped()
+    {
+        var initialOrder = new Order
         {
-            var initialOrder = new Order
-            {
-                Id = 1,
-                Status = OrderStatus.Created
-            };
+            Id = 1,
+            Status = OrderStatus.Created
+        };
 
-            _orderRepository.AddOrder(initialOrder);
+        _orderRepository.AddOrder(initialOrder);
 
-            var request = new OrderShipmentRequest
-            {
-                OrderId = 1
-            };
-
-            await Assert.ThrowsAsync<OrderCannotBeShippedException>(() => _useCase.RunAsync(request));
-
-            Assert.Null(_orderRepository.SavedOrder);
-            Assert.Null(_shipmentService.ShippedOrder);
-        }
-
-        [Fact]
-        public async Task Rejected_Order_Cannot_Be_Shipped()
+        var request = new OrderShipmentRequest
         {
-            var initialOrder = new Order
-            {
-                Id = 1,
-                Status = OrderStatus.Rejected
-            };
+            OrderId = 1
+        };
 
-            _orderRepository.AddOrder(initialOrder);
+        await Assert.ThrowsAsync<OrderCannotBeShippedException>(() => _useCase.RunAsync(request));
 
-            var request = new OrderShipmentRequest
-            {
-                OrderId = 1
-            };
+        Assert.Null(_orderRepository.SavedOrder);
+        Assert.Null(_shipmentService.ShippedOrder);
+    }
 
-            await Assert.ThrowsAsync<OrderCannotBeShippedException>(() => _useCase.RunAsync(request));
-
-            Assert.Null(_orderRepository.SavedOrder);
-            Assert.Null(_shipmentService.ShippedOrder);
-        }
-
-        [Fact]
-        public async Task Shipped_Order_Cannot_Be_Shipped_Again()
+    [Fact]
+    public async Task Rejected_Order_Cannot_Be_Shipped()
+    {
+        var initialOrder = new Order
         {
-            var initialOrder = new Order
-            {
-                Id = 1,
-                Status = OrderStatus.Shipped
-            };
+            Id = 1,
+            Status = OrderStatus.Rejected
+        };
 
-            _orderRepository.AddOrder(initialOrder);
+        _orderRepository.AddOrder(initialOrder);
 
-            var request = new OrderShipmentRequest
-            {
-                OrderId = 1
-            };
+        var request = new OrderShipmentRequest
+        {
+            OrderId = 1
+        };
 
-            await Assert.ThrowsAsync<OrderCannotBeShippedTwiceException>(() => _useCase.RunAsync(request));
+        await Assert.ThrowsAsync<OrderCannotBeShippedException>(() => _useCase.RunAsync(request));
 
-            Assert.Null(_orderRepository.SavedOrder);
-            Assert.Null(_shipmentService.ShippedOrder);
-        }
+        Assert.Null(_orderRepository.SavedOrder);
+        Assert.Null(_shipmentService.ShippedOrder);
+    }
+
+    [Fact]
+    public async Task Shipped_Order_Cannot_Be_Shipped_Again()
+    {
+        var initialOrder = new Order
+        {
+            Id = 1,
+            Status = OrderStatus.Shipped
+        };
+
+        _orderRepository.AddOrder(initialOrder);
+
+        var request = new OrderShipmentRequest
+        {
+            OrderId = 1
+        };
+
+        await Assert.ThrowsAsync<OrderCannotBeShippedTwiceException>(() => _useCase.RunAsync(request));
+
+        Assert.Null(_orderRepository.SavedOrder);
+        Assert.Null(_shipmentService.ShippedOrder);
     }
 }

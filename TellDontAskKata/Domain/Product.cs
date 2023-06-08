@@ -1,9 +1,8 @@
-﻿namespace TellDontAskKata.Domain
+﻿namespace TellDontAskKata.Domain;
+
+public class Product
 {
-    public class Product
-    {
-        public string Name { get; set; }
-        public decimal Price { get; set; }
-        public Category Category { get; set; }
-    }
+    public string Name { get; set; }
+    public decimal Price { get; set; }
+    public Category Category { get; set; }
 }

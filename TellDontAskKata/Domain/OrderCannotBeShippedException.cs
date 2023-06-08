@@ -1,8 +1,7 @@
 ﻿using System;
 
-namespace TellDontAskKata.Domain
+namespace TellDontAskKata.Domain;
+
+public class OrderCannotBeShippedException : Exception
 {
-    public class OrderCannotBeShippedException : Exception
-    {
-    }
 }

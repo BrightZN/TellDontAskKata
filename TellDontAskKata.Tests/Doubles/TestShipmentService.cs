@@ -2,17 +2,16 @@
 using TellDontAskKata.Domain;
 using TellDontAskKata.Services;
 
-namespace TellDontAskKata.Tests.Doubles
+namespace TellDontAskKata.Tests.Doubles;
+
+public class TestShipmentService : IShipmentService
 {
-    public class TestShipmentService : IShipmentService
+    public Order ShippedOrder { get; private set; }
+
+    public Task ShipAsync(Order order)
     {
-        public Order ShippedOrder { get; private set; }
+        ShippedOrder = order;
 
-        public Task ShipAsync(Order order)
-        {
-            ShippedOrder = order;
-
-            return Task.CompletedTask;
-        }
+        return Task.CompletedTask;
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace TellDontAskKata.UseCases
+﻿namespace TellDontAskKata.UseCases;
+
+public class OrderApprovalRequest
 {
-    public class OrderApprovalRequest
-    {
-        public int OrderId { get; set; }
-        public bool Approved { get; set; }
-    }
+    public int OrderId { get; set; }
+    public bool Approved { get; set; }
 }

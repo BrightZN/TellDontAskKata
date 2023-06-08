@@ -6,100 +6,99 @@ using TellDontAskKata.Tests.Doubles;
 using TellDontAskKata.UseCases;
 using Xunit;
 
-namespace TellDontAskKata.Tests.UseCases
+namespace TellDontAskKata.Tests.UseCases;
+
+public class OrderCreationUseCaseTest
 {
-    public class OrderCreationUseCaseTest
+    private readonly TestOrderRepository _orderRepository;
+    private readonly Category _food;
+    private readonly IProductCatalog _productCatalog;
+    private readonly OrderCreationUseCase _useCase;
+
+    public OrderCreationUseCaseTest()
     {
-        private readonly TestOrderRepository _orderRepository;
-        private readonly Category _food;
-        private readonly IProductCatalog _productCatalog;
-        private readonly OrderCreationUseCase _useCase;
+        _orderRepository = new TestOrderRepository();
 
-        public OrderCreationUseCaseTest()
+        _food = new Category
         {
-            _orderRepository = new TestOrderRepository();
+            Name = "food",
+            TaxPercentage = 10.00M
+        };
 
-            _food = new Category
+        _productCatalog = new InMemoryProductCatalog(new List<Product> { 
+            new Product 
             {
-                Name = "food",
-                TaxPercentage = 10.00M
-            };
+                Name = "salad",
+                Price = 3.56M,
+                Category = _food
+            },
+            new Product
+            {
+                Name = "tomato",
+                Price = 4.65M,
+                Category = _food
+            }
+        });
 
-            _productCatalog = new InMemoryProductCatalog(new List<Product> { 
-                new Product 
+        _useCase = new OrderCreationUseCase(_orderRepository, _productCatalog);
+    }
+
+    [Fact]
+    public async Task Sell_Multiple_Items()
+    {
+        var request = new SellItemsRequest
+        { 
+            Requests = new List<SellItemRequest>
+            {
+                new SellItemRequest
                 {
                     Name = "salad",
-                    Price = 3.56M,
-                    Category = _food
+                    Quantity = 2
                 },
-                new Product
+                new SellItemRequest
                 {
                     Name = "tomato",
-                    Price = 4.65M,
-                    Category = _food
+                    Quantity = 3
                 }
-            });
+            }
+        };
 
-            _useCase = new OrderCreationUseCase(_orderRepository, _productCatalog);
-        }
+        await _useCase.RunAsync(request);
 
-        [Fact]
-        public async Task Sell_Multiple_Items()
+        var createdOrder = _orderRepository.SavedOrder;
+
+        Assert.Equal(OrderStatus.Created, createdOrder.Status);
+        Assert.Equal(23.20M, createdOrder.Total);
+        Assert.Equal("EUR", createdOrder.Currency);
+        Assert.Equal(2, createdOrder.Items.Count);
+
+        Assert.Equal("salad", createdOrder.Items[0].Product.Name);
+        Assert.Equal(3.56M, createdOrder.Items[0].Product.Price);
+        Assert.Equal(2, createdOrder.Items[0].Quantity);
+        Assert.Equal(7.84M, createdOrder.Items[0].TaxedAmount);
+        Assert.Equal(0.72M, createdOrder.Items[0].Tax);
+
+        Assert.Equal("tomato", createdOrder.Items[1].Product.Name);
+        Assert.Equal(4.65M, createdOrder.Items[1].Product.Price);
+        Assert.Equal(3, createdOrder.Items[1].Quantity);
+        Assert.Equal(15.36M, createdOrder.Items[1].TaxedAmount);
+        Assert.Equal(1.41M, createdOrder.Items[1].Tax);
+    }
+
+    [Fact]
+    public async Task Cannot_Create_Order_With_Unknown_Product()
+    {
+        var request = new SellItemsRequest
         {
-            var request = new SellItemsRequest
-            { 
-                Requests = new List<SellItemRequest>
-                {
-                    new SellItemRequest
-                    {
-                        Name = "salad",
-                        Quantity = 2
-                    },
-                    new SellItemRequest
-                    {
-                        Name = "tomato",
-                        Quantity = 3
-                    }
-                }
-            };
-
-            await _useCase.RunAsync(request);
-
-            var createdOrder = _orderRepository.SavedOrder;
-
-            Assert.Equal(OrderStatus.Created, createdOrder.Status);
-            Assert.Equal(23.20M, createdOrder.Total);
-            Assert.Equal("EUR", createdOrder.Currency);
-            Assert.Equal(2, createdOrder.Items.Count);
-
-            Assert.Equal("salad", createdOrder.Items[0].Product.Name);
-            Assert.Equal(3.56M, createdOrder.Items[0].Product.Price);
-            Assert.Equal(2, createdOrder.Items[0].Quantity);
-            Assert.Equal(7.84M, createdOrder.Items[0].TaxedAmount);
-            Assert.Equal(0.72M, createdOrder.Items[0].Tax);
-
-            Assert.Equal("tomato", createdOrder.Items[1].Product.Name);
-            Assert.Equal(4.65M, createdOrder.Items[1].Product.Price);
-            Assert.Equal(3, createdOrder.Items[1].Quantity);
-            Assert.Equal(15.36M, createdOrder.Items[1].TaxedAmount);
-            Assert.Equal(1.41M, createdOrder.Items[1].Tax);
-        }
-
-        [Fact]
-        public async Task Cannot_Create_Order_With_Unknown_Product()
-        {
-            var request = new SellItemsRequest
+            Requests = new List<SellItemRequest>
             {
-                Requests = new List<SellItemRequest>
+                new SellItemRequest
                 {
-                    new SellItemRequest
-                    {
-                        Name = "unknown product"
-                    }
+                    Name = "unknown product"
                 }
-            };
+            }
+        };
 
-            await Assert.ThrowsAsync<UnknownProductException>(() => _useCase.RunAsync(request));
-        }
+        await Assert.ThrowsAsync<UnknownProductException>(() => _useCase.RunAsync(request));
     }
 }

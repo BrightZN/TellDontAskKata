@@ -1,8 +1,7 @@
-﻿namespace TellDontAskKata.UseCases
+﻿namespace TellDontAskKata.UseCases;
+
+public class SellItemRequest
 {
-    public class SellItemRequest
-    {
-        public string Name { get; set; }
-        public int Quantity { get; set; }
-    }
+    public string Name { get; set; }
+    public int Quantity { get; set; }
 }

@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using TellDontAskKata.Domain;
 
-namespace TellDontAskKata.Services
+namespace TellDontAskKata.Services;
+
+public interface IShipmentService
 {
-    public interface IShipmentService
-    {
-        Task ShipAsync(Order order);
-    }
+    Task ShipAsync(Order order);
 }

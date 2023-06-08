@@ -1,11 +1,10 @@
 ﻿using System.Threading.Tasks;
 using TellDontAskKata.Domain;
 
-namespace TellDontAskKata.Repositories
+namespace TellDontAskKata.Repositories;
+
+public interface IOrderRepository
 {
-    public interface IOrderRepository
-    {
-        Task<Order?> GetByIdAsync(int orderId);
-        Task SaveAsync(Order order);
-    }
+    Task<Order?> GetByIdAsync(int orderId);
+    Task SaveAsync(Order order);
 }

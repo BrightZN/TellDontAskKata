@@ -1,10 +1,9 @@
-﻿namespace TellDontAskKata.Domain
+﻿namespace TellDontAskKata.Domain;
+
+public enum OrderStatus
 {
-    public enum OrderStatus
-    {
-        Approved,
-        Rejected,
-        Shipped,
-        Created
-    }
+    Approved,
+    Rejected,
+    Shipped,
+    Created
 }

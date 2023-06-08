@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 using TellDontAskKata.Domain;
 
-namespace TellDontAskKata.Repositories
+namespace TellDontAskKata.Repositories;
+
+public interface IProductCatalog
 {
-    public interface IProductCatalog
-    {
-        Task<Product?> GetByNameAsync(string name);
-    }
+    Task<Product?> GetByNameAsync(string name);
 }

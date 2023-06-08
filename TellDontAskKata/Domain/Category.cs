@@ -1,8 +1,7 @@
-﻿namespace TellDontAskKata.Domain
+﻿namespace TellDontAskKata.Domain;
+
+public class Category
 {
-    public class Category
-    {
-        public string Name { get; set; }
-        public decimal TaxPercentage { get; set; }
-    }
+    public string Name { get; set; }
+    public decimal TaxPercentage { get; set; }
 }

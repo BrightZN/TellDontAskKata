@@ -1,8 +1,7 @@
 ﻿using System;
 
-namespace TellDontAskKata.Domain
+namespace TellDontAskKata.Domain;
+
+public class ShippedOrdersCannotBeChangedException : Exception
 {
-    public class ShippedOrdersCannotBeChangedException : Exception
-    {
-    }
 }

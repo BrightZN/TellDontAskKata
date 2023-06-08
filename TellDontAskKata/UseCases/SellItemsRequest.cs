@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace TellDontAskKata.UseCases
+namespace TellDontAskKata.UseCases;
+
+public class SellItemsRequest
 {
-    public class SellItemsRequest
-    {
-        public List<SellItemRequest> Requests { get; set; }
-    }
+    public List<SellItemRequest> Requests { get; set; }
 }

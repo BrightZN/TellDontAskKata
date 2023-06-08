@@ -4,167 +4,166 @@ using TellDontAskKata.Tests.Doubles;
 using TellDontAskKata.UseCases;
 using Xunit;
 
-namespace TellDontAskKata.Tests.UseCases
+namespace TellDontAskKata.Tests.UseCases;
+
+public class OrderApprovalUseCaseTest
 {
-    public class OrderApprovalUseCaseTest
+    private readonly TestOrderRepository _orderRepository;
+    private readonly OrderApprovalUseCase _useCase;
+
+    public OrderApprovalUseCaseTest()
     {
-        private readonly TestOrderRepository _orderRepository;
-        private readonly OrderApprovalUseCase _useCase;
+        _orderRepository = new TestOrderRepository();
+        _useCase = new OrderApprovalUseCase(_orderRepository);
+    }
 
-        public OrderApprovalUseCaseTest()
+    [Fact]
+    public async Task Approves_Existing_Order()
+    {
+        var initialOrder = new Order
         {
-            _orderRepository = new TestOrderRepository();
-            _useCase = new OrderApprovalUseCase(_orderRepository);
-        }
+            Status = OrderStatus.Created,
+            Id = 1
+        };
 
-        [Fact]
-        public async Task Approves_Existing_Order()
+        _orderRepository.AddOrder(initialOrder);
+
+        var request = new OrderApprovalRequest
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Created,
-                Id = 1
-            };
+            OrderId = 1,
+            Approved = true
+        };
 
-            _orderRepository.AddOrder(initialOrder);
+        await _useCase.RunAsync(request);
 
-            var request = new OrderApprovalRequest
-            {
-                OrderId = 1,
-                Approved = true
-            };
+        var savedOrder = _orderRepository.SavedOrder;
 
-            await _useCase.RunAsync(request);
+        Assert.Equal(OrderStatus.Approved, savedOrder.Status);
+    }
 
-            var savedOrder = _orderRepository.SavedOrder;
-
-            Assert.Equal(OrderStatus.Approved, savedOrder.Status);
-        }
-
-        [Fact]
-        public async Task Rejects_Existing_Order()
+    [Fact]
+    public async Task Rejects_Existing_Order()
+    {
+        var initialOrder = new Order
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Created,
-                Id = 1
-            };
+            Status = OrderStatus.Created,
+            Id = 1
+        };
 
-            _orderRepository.AddOrder(initialOrder);
+        _orderRepository.AddOrder(initialOrder);
 
-            var request = new OrderApprovalRequest
-            {
-                OrderId = 1,
-                Approved = false
-            };
-
-            await _useCase.RunAsync(request);
-
-            var savedOrder = _orderRepository.SavedOrder;
-
-            Assert.Equal(OrderStatus.Rejected, savedOrder.Status);
-        }
-
-        [Fact]
-        public async Task Cannot_Approve_Rejected_Order()
+        var request = new OrderApprovalRequest
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Rejected,
-                Id = 1
-            };
+            OrderId = 1,
+            Approved = false
+        };
 
-            _orderRepository.AddOrder(initialOrder);
+        await _useCase.RunAsync(request);
 
-            var request = new OrderApprovalRequest
-            {
-                OrderId = 1,
-                Approved = true
-            };
+        var savedOrder = _orderRepository.SavedOrder;
 
-            await Assert.ThrowsAsync<RejectedOrderCannotBeApprovedException>(() => _useCase.RunAsync(request));
+        Assert.Equal(OrderStatus.Rejected, savedOrder.Status);
+    }
 
-            Assert.Null(_orderRepository.SavedOrder);
-        }
-
-        [Fact]
-        public async Task Cannot_Reject_Approved_Order()
+    [Fact]
+    public async Task Cannot_Approve_Rejected_Order()
+    {
+        var initialOrder = new Order
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Approved,
-                Id = 1
-            };
+            Status = OrderStatus.Rejected,
+            Id = 1
+        };
 
-            _orderRepository.AddOrder(initialOrder);
+        _orderRepository.AddOrder(initialOrder);
 
-            var request = new OrderApprovalRequest
-            {
-                OrderId = 1,
-                Approved = false
-            };
-
-            await Assert.ThrowsAsync<ApprovedOrderCannotBeRejectedException>(() => _useCase.RunAsync(request));
-
-            Assert.Null(_orderRepository.SavedOrder);
-        }
-
-        [Fact]
-        public async Task Cannot_Approve_Shipped_Order()
+        var request = new OrderApprovalRequest
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Shipped,
-                Id = 1
-            };
+            OrderId = 1,
+            Approved = true
+        };
 
-            _orderRepository.AddOrder(initialOrder);
+        await Assert.ThrowsAsync<RejectedOrderCannotBeApprovedException>(() => _useCase.RunAsync(request));
 
-            var request = new OrderApprovalRequest
-            {
-                OrderId = 1,
-                Approved = true
-            };
+        Assert.Null(_orderRepository.SavedOrder);
+    }
 
-            await Assert.ThrowsAsync<ShippedOrdersCannotBeChangedException>(() => _useCase.RunAsync(request));
-
-            Assert.Null(_orderRepository.SavedOrder);
-        }
-
-        [Fact]
-        public async Task Cannot_Reject_Shipped_Order()
+    [Fact]
+    public async Task Cannot_Reject_Approved_Order()
+    {
+        var initialOrder = new Order
         {
-            var initialOrder = new Order
-            {
-                Status = OrderStatus.Shipped,
-                Id = 1
-            };
+            Status = OrderStatus.Approved,
+            Id = 1
+        };
 
-            _orderRepository.AddOrder(initialOrder);
+        _orderRepository.AddOrder(initialOrder);
 
-            var request = new OrderApprovalRequest
-            {
-                OrderId = 1,
-                Approved = false
-            };
-
-            await Assert.ThrowsAsync<ShippedOrdersCannotBeChangedException>(() => _useCase.RunAsync(request));
-
-            Assert.Null(_orderRepository.SavedOrder);
-        }
-
-        [Fact]
-        public async Task Throws_Exception_When_Order_Is_Null()
+        var request = new OrderApprovalRequest
         {
-            var request = new OrderApprovalRequest
-            {
-                OrderId = 1,
-                Approved = true
-            };
+            OrderId = 1,
+            Approved = false
+        };
 
-            await Assert.ThrowsAsync<OrderNotFoundException>(() => _useCase.RunAsync(request));
+        await Assert.ThrowsAsync<ApprovedOrderCannotBeRejectedException>(() => _useCase.RunAsync(request));
 
-            Assert.Null(_orderRepository.SavedOrder);
-        }
+        Assert.Null(_orderRepository.SavedOrder);
+    }
+
+    [Fact]
+    public async Task Cannot_Approve_Shipped_Order()
+    {
+        var initialOrder = new Order
+        {
+            Status = OrderStatus.Shipped,
+            Id = 1
+        };
+
+        _orderRepository.AddOrder(initialOrder);
+
+        var request = new OrderApprovalRequest
+        {
+            OrderId = 1,
+            Approved = true
+        };
+
+        await Assert.ThrowsAsync<ShippedOrdersCannotBeChangedException>(() => _useCase.RunAsync(request));
+
+        Assert.Null(_orderRepository.SavedOrder);
+    }
+
+    [Fact]
+    public async Task Cannot_Reject_Shipped_Order()
+    {
+        var initialOrder = new Order
+        {
+            Status = OrderStatus.Shipped,
+            Id = 1
+        };
+
+        _orderRepository.AddOrder(initialOrder);
+
+        var request = new OrderApprovalRequest
+        {
+            OrderId = 1,
+            Approved = false
+        };
+
+        await Assert.ThrowsAsync<ShippedOrdersCannotBeChangedException>(() => _useCase.RunAsync(request));
+
+        Assert.Null(_orderRepository.SavedOrder);
+    }
+
+    [Fact]
+    public async Task Throws_Exception_When_Order_Is_Null()
+    {
+        var request = new OrderApprovalRequest
+        {
+            OrderId = 1,
+            Approved = true
+        };
+
+        await Assert.ThrowsAsync<OrderNotFoundException>(() => _useCase.RunAsync(request));
+
+        Assert.Null(_orderRepository.SavedOrder);
     }
 }
