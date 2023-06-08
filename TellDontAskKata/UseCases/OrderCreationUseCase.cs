@@ -40,15 +40,23 @@ public class OrderCreationUseCase
             {
                 // need to find the C# equivalent of Java BigDecimal.setScale(2, HALF_UP)
                     
-                decimal unitaryTax = decimal.Round(product.Price / 100.00M * product.Category.TaxPercentage, 2, MidpointRounding.AwayFromZero); // .setScale(2, HALF_UP)
-                decimal unitaryTaxedAmount = decimal.Round(product.Price + unitaryTax, 2, MidpointRounding.AwayFromZero); // .setScale(2, HALF_UP)
-                decimal taxedAmount = decimal.Round(unitaryTaxedAmount * itemRequest.Quantity, 2, MidpointRounding.AwayFromZero); // .setScale(2, HALF_UP)
-                decimal taxAmount = unitaryTax * itemRequest.Quantity;
+                var itemRequestQuantity = itemRequest.Quantity;
+                
+                var unitaryTax =  decimal.Round(
+                    product.Price / 100.00M * product.Category.TaxPercentage, 2, MidpointRounding.AwayFromZero);
+                
+                var unitaryTaxedAmount =  decimal.Round(
+                    product.Price + unitaryTax, 2, MidpointRounding.AwayFromZero);
+                
+                var taxedAmount = decimal.Round(
+                    unitaryTaxedAmount * itemRequestQuantity, 2, MidpointRounding.AwayFromZero);
+                
+                var taxAmount = unitaryTax * itemRequestQuantity;
 
                 var orderItem = new OrderItem
                 {
                     Product = product,
-                    Quantity = itemRequest.Quantity,
+                    Quantity = itemRequestQuantity,
                     Tax = taxAmount,
                     TaxedAmount = taxedAmount
                 };
