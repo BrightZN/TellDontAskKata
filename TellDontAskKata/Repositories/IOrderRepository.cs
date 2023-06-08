@@ -5,7 +5,7 @@ namespace TellDontAskKata.Repositories
 {
     public interface IOrderRepository
     {
-        Task<Order> GetByIdAsync(int orderId);
+        Task<Order?> GetByIdAsync(int orderId);
         Task SaveAsync(Order order);
     }
 }

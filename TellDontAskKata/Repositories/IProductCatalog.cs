@@ -5,6 +5,6 @@ namespace TellDontAskKata.Repositories
 {
     public interface IProductCatalog
     {
-        Task<Product> GetByNameAsync(string name);
+        Task<Product?> GetByNameAsync(string name);
     }
 }
