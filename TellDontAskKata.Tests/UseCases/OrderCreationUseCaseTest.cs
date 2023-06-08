@@ -25,20 +25,22 @@ public class OrderCreationUseCaseTest
             TaxPercentage = 10.00M
         };
 
-        _productCatalog = new InMemoryProductCatalog(new List<Product> { 
-            new Product 
+        var products = new List<Product> { 
+            new()
             {
                 Name = "salad",
                 Price = 3.56M,
                 Category = _food
             },
-            new Product
+            new()
             {
                 Name = "tomato",
                 Price = 4.65M,
                 Category = _food
             }
-        });
+        };
+        
+        _productCatalog = new InMemoryProductCatalog(products);
 
         _useCase = new OrderCreationUseCase(_orderRepository, _productCatalog);
     }
@@ -50,12 +52,12 @@ public class OrderCreationUseCaseTest
         { 
             Requests = new List<SellItemRequest>
             {
-                new SellItemRequest
+                new()
                 {
                     Name = "salad",
                     Quantity = 2
                 },
-                new SellItemRequest
+                new()
                 {
                     Name = "tomato",
                     Quantity = 3
@@ -72,17 +74,21 @@ public class OrderCreationUseCaseTest
         Assert.Equal("EUR", createdOrder.Currency);
         Assert.Equal(2, createdOrder.Items.Count);
 
-        Assert.Equal("salad", createdOrder.Items[0].Product.Name);
-        Assert.Equal(3.56M, createdOrder.Items[0].Product.Price);
-        Assert.Equal(2, createdOrder.Items[0].Quantity);
-        Assert.Equal(7.84M, createdOrder.Items[0].TaxedAmount);
-        Assert.Equal(0.72M, createdOrder.Items[0].Tax);
+        var firstItem = createdOrder.Items[0];
+        
+        Assert.Equal("salad", firstItem.Product.Name);
+        Assert.Equal(3.56M, firstItem.Product.Price);
+        Assert.Equal(2, firstItem.Quantity);
+        Assert.Equal(7.84M, firstItem.TaxedAmount);
+        Assert.Equal(0.72M, firstItem.Tax);
 
-        Assert.Equal("tomato", createdOrder.Items[1].Product.Name);
-        Assert.Equal(4.65M, createdOrder.Items[1].Product.Price);
-        Assert.Equal(3, createdOrder.Items[1].Quantity);
-        Assert.Equal(15.36M, createdOrder.Items[1].TaxedAmount);
-        Assert.Equal(1.41M, createdOrder.Items[1].Tax);
+        var secondItem = createdOrder.Items[1];
+        
+        Assert.Equal("tomato", secondItem.Product.Name);
+        Assert.Equal(4.65M, secondItem.Product.Price);
+        Assert.Equal(3, secondItem.Quantity);
+        Assert.Equal(15.36M, secondItem.TaxedAmount);
+        Assert.Equal(1.41M, secondItem.Tax);
     }
 
     [Fact]
@@ -92,7 +98,7 @@ public class OrderCreationUseCaseTest
         {
             Requests = new List<SellItemRequest>
             {
-                new SellItemRequest
+                new()
                 {
                     Name = "unknown product"
                 }

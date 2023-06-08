@@ -15,8 +15,18 @@ public class InMemoryProductCatalog : IProductCatalog
         _products = products;
     }
 
-    public Task<Product> GetByNameAsync(string name)
+    public Task<Product?> GetByNameAsync(string name)
     {
         return Task.FromResult(_products.FirstOrDefault(p => p.Name == name));
+    }
+
+    public Task<ProductList> GetByNamesAsync(IReadOnlyCollection<string> names)
+    {
+        var productsWithNames = _products.Where(p => names.Contains(p.Name))
+            .ToArray();
+
+        var productList = new ProductList(productsWithNames);
+        
+        return Task.FromResult(productList);
     }
 }

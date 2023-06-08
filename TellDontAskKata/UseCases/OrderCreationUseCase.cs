@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using TellDontAskKata.Domain;
 using TellDontAskKata.Repositories;
@@ -28,9 +29,13 @@ public class OrderCreationUseCase
             Tax = 0.00M
         };
 
+        var productNames = request.Requests.Select(r => r.Name).ToArray();
+
+        var products = await _productCatalog.GetByNamesAsync(productNames);
+
         foreach(var itemRequest in request.Requests)
         {
-            var product = await _productCatalog.GetByNameAsync(itemRequest.Name);
+            var product = products.FindByName(itemRequest.Name);
 
             if(product == null)
             {
