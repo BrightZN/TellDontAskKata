@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TellDontAskKata.Domain;
@@ -37,40 +36,19 @@ public class OrderCreationUseCase
         {
             var product = products.FindByName(itemRequest.Name);
 
-            if(product == null)
-            {
+            if(product is null)
                 throw new UnknownProductException();
-            }
-            else
-            {
-                // need to find the C# equivalent of Java BigDecimal.setScale(2, HALF_UP)
+            
+            // need to find the C# equivalent of Java BigDecimal.setScale(2, HALF_UP)
                     
-                var itemRequestQuantity = itemRequest.Quantity;
-                
-                var unitaryTax =  decimal.Round(
-                    product.Price / 100.00M * product.Category.TaxPercentage, 2, MidpointRounding.AwayFromZero);
-                
-                var unitaryTaxedAmount =  decimal.Round(
-                    product.Price + unitaryTax, 2, MidpointRounding.AwayFromZero);
-                
-                var taxedAmount = decimal.Round(
-                    unitaryTaxedAmount * itemRequestQuantity, 2, MidpointRounding.AwayFromZero);
-                
-                var taxAmount = unitaryTax * itemRequestQuantity;
+            var quantity = itemRequest.Quantity;
 
-                var orderItem = new OrderItem
-                {
-                    Product = product,
-                    Quantity = itemRequestQuantity,
-                    Tax = taxAmount,
-                    TaxedAmount = taxedAmount
-                };
+            var orderItem = new OrderItem(product, quantity);
 
-                order.Items.Add(orderItem);
+            order.Items.Add(orderItem);
 
-                order.Total += taxedAmount;
-                order.Tax += taxAmount;
-            }
+            order.Total += orderItem.TaxedAmount;
+            order.Tax += orderItem.Tax;
         }
 
         await _orderRepository.SaveAsync(order);
